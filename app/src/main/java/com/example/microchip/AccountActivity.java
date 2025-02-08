@@ -22,6 +22,8 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class AccountActivity extends AppCompatActivity {
 
     public static final int RESULT_PRODUCT_ACTIVITY = 1;
@@ -29,11 +31,12 @@ public class AccountActivity extends AppCompatActivity {
 
     private RecyclerView rcvCustomer;
     private CustomerAdapter customerAdapter;
-
+    private CircleImageView btn_add;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account);
+        init();
 
         rcvCustomer = findViewById(R.id.rcv_customer);
         customerAdapter = new CustomerAdapter(this);
@@ -43,6 +46,14 @@ public class AccountActivity extends AppCompatActivity {
 
         customerAdapter.setData(getListCusTomer());
         rcvCustomer.setAdapter(customerAdapter);
+
+        btn_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(AccountActivity.this,AddAccountActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private List<Customer> getListCusTomer() {
@@ -53,13 +64,24 @@ public class AccountActivity extends AppCompatActivity {
         if(cursor.moveToFirst()){
             do {
                 Customer customer = new Customer(
-                        cursor.getInt(0),
-                        cursor.getString(1)
+                        cursor.getInt(0),//id
+                        cursor.getString(1),//name
+                        cursor.getString(2),//email
+                        cursor.getString(3),//tel
+                        cursor.getString(4),//url avatar
+                        cursor.getInt(5),//gender
+                        cursor.getString(6),//birthday
+                        cursor.getString(7),//password
+                        cursor.getString(8)//address
                 );
                 list.add(customer);
             }while(cursor.moveToNext());
         }
         cursor.close();
         return list;
+    }
+
+    public void init(){
+        btn_add = findViewById(R.id.btn_add);
     }
 }

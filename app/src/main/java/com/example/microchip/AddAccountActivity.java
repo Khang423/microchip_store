@@ -10,8 +10,11 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
@@ -20,14 +23,23 @@ import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class AddAccountActivity extends AppCompatActivity {
-    Button btn_change_image,btn_add;
-    ImageView imageReview;
-    TextInputEditText input_name,input_tel,input_mail,input_password;
+    Button btn_change_image, btn_add;
+    CircleImageView imageReview;
+    TextInputEditText input_name, input_tel, input_mail, input_password;
 
     SQLiteDatabase db = null;
     private static final int PICK_IMAGE_REQUEST = 1;
     private static final int PERMISSION_REQUEST_CODE = 2;
+    private Uri selectedImageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +62,7 @@ public class AddAccountActivity extends AppCompatActivity {
         btn_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                insert();
+                add();
             }
         });
     }
@@ -66,7 +78,7 @@ public class AddAccountActivity extends AppCompatActivity {
         imageReview = findViewById(R.id.imageReview);
         btn_add = findViewById(R.id.btn_add);
         input_name = findViewById(R.id.input_name);
-        input_tel  = findViewById(R.id.input_tel);
+        input_tel = findViewById(R.id.input_tel);
         input_mail = findViewById(R.id.input_mail);
         input_password = findViewById(R.id.input_password);
     }
@@ -75,7 +87,7 @@ public class AddAccountActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
-            Uri selectedImageUri = data.getData();
+            selectedImageUri = data.getData();
             imageReview.setImageURI(selectedImageUri);
         }
     }
@@ -92,28 +104,67 @@ public class AddAccountActivity extends AppCompatActivity {
         }
     }
 
-    public void insert()
-    {
+    private String saveImageToExternalStorage(Uri imageUri) {
+        if (imageUri == null) return null;
+
         try {
-            db = openOrCreateDatabase("microchip.db", Context.MODE_PRIVATE, null);
-
-            String name = input_name.getText().toString();
-            String tel = input_tel.getText().toString();
-            String mail = input_mail.getText().toString();
-            String password = input_password.getText().toString();
-
-            db.execSQL("INSERT INTO member(name, mail, tel, avatar, address, password) " +
-                            "VALUES(?, ?, ?, ?, ?, ?)", new String[]{name, mail, tel, "","", password});
-
-            setResult(RESULT_OK);
-        } catch (SQLException e) {
-            e.printStackTrace(); // In lỗi ra log để dễ dàng debug
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
-        } finally {
-            if (db != null) {
-                db.close();
-                finish();
+            File directory = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "MyAppImages");
+            if (!directory.exists() && !directory.mkdirs()) {
+                Toast.makeText(this, "Không thể tạo thư mục!", Toast.LENGTH_SHORT).show();
+                return null;
             }
+
+            String timeStamp = String.valueOf(System.currentTimeMillis());
+            File file = new File(directory, "customer_img_" + timeStamp + ".png");
+
+            // Kiểm tra nếu không mở được InputStream
+            InputStream inputStream = getContentResolver().openInputStream(imageUri);
+            if (inputStream == null) {
+                Toast.makeText(this, "Lỗi khi mở ảnh!", Toast.LENGTH_SHORT).show();
+                return null;
+            }
+
+            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+            FileOutputStream fos = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.close();
+
+            Toast.makeText(this, "Hình ảnh đã lưu tại: " + file.getAbsolutePath(), Toast.LENGTH_SHORT).show();
+            return file.getAbsolutePath();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Lỗi khi lưu ảnh!", Toast.LENGTH_SHORT).show();
+            return null;
         }
     }
+
+
+    public void add() {
+        String name = input_name.getText().toString();
+        String tel = input_tel.getText().toString();
+        String email = input_mail.getText().toString();
+        String password = input_password.getText().toString();
+
+        // Kiểm tra nếu chưa chọn ảnh thì không lưu
+        if (selectedImageUri == null) {
+            Toast.makeText(this, "Vui lòng chọn ảnh trước!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String imgPath = saveImageToExternalStorage(selectedImageUri);
+        if (imgPath == null) {
+            Toast.makeText(this, "Lưu ảnh thất bại!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        DatabaseHelper dbHelper = new DatabaseHelper(this);
+        try {
+            dbHelper.addCustomer(name, email, tel, imgPath, 1, "04-02-2003", password, null);
+            Toast.makeText(this, "Thêm thành công!", Toast.LENGTH_SHORT).show();
+            finish();
+        } catch (SQLException e) {
+            Toast.makeText(this, "Lỗi khi thêm tài khoản: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }

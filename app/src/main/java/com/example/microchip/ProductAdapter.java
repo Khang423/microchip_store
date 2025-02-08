@@ -2,12 +2,10 @@ package com.example.microchip;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,18 +15,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.CustomerViewHolder> {
+public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.CustomerViewHolder> {
 
     private DatabaseHelper dbHelper;
     private Context mContext;
-    private List<Customer> mlistCustomer;
+    private List<Product> listProduct;
 
-    public CustomerAdapter(Context mContext) {
+    public ProductAdapter(Context mContext) {
         this.mContext = mContext;
     }
 
-    public void setData(List<Customer> list) {
-        this.mlistCustomer = list;
+    public void setData(List<Product> list) {
+        this.listProduct = list;
         notifyDataSetChanged();
     }
 
@@ -43,24 +41,24 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.Custom
     @SuppressLint("RecyclerView")
     @Override
     public void onBindViewHolder(@NonNull CustomerViewHolder holder, int position) {
-        Customer cus = mlistCustomer.get(position);
-        if(cus == null){
+        Product product = listProduct.get(position);
+        if(product == null){
             return;
         }
-        String urlAvatar = cus.getUrl_avatar();
+        String urlAvatar = product.getUrl_img();
         if (urlAvatar != null) {
             holder.imgUser.setImageURI(Uri.parse(urlAvatar));
         } else {
             holder.imgUser.setImageResource(R.drawable.anh1); // Hình ảnh mặc định nếu không có
         }
-        holder.tv_user.setText(cus.getName());
+        holder.tv_user.setText(product.getName());
 
         holder.btn_delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dbHelper = new DatabaseHelper(mContext);
-                dbHelper.deleteCustomer(cus.getId());
-                mlistCustomer.remove(position);
+                dbHelper.deleteCustomer(product.getId());
+                listProduct.remove(position);
                 notifyItemRemoved(position);
                 Toast.makeText(mContext, "Xoá thành công",Toast.LENGTH_SHORT).show(); // Thông báo
             }
@@ -69,8 +67,8 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.Custom
 
     @Override
     public int getItemCount() {
-        if (mlistCustomer != null) {
-            return mlistCustomer.size();
+        if (listProduct != null) {
+            return listProduct.size();
         }
         return 0;
     }

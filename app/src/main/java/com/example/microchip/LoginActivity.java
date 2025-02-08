@@ -44,7 +44,7 @@ public class LoginActivity extends AppCompatActivity {
                 String password = edt_password.getText().toString();
 
                 if(username.isEmpty()) {
-                     layout_email.setHelperText("Không được để trống !");
+                     layout_email.setError("Không được để trống !");
                 }else {
                     layout_email.setError(null); // Xóa lỗi
                 }
