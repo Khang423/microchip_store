@@ -1,7 +1,9 @@
 package com.example.microchip;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,7 +35,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.Customer
     @NonNull
     @Override
     public CustomerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_customer,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_product, parent, false);
         return new CustomerViewHolder(view);
     }
 
@@ -42,25 +44,53 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.Customer
     @Override
     public void onBindViewHolder(@NonNull CustomerViewHolder holder, int position) {
         Product product = listProduct.get(position);
-        if(product == null){
+        if (product == null) {
             return;
         }
-        String urlAvatar = product.getUrl_img();
-        if (urlAvatar != null) {
-            holder.imgUser.setImageURI(Uri.parse(urlAvatar));
+        // kiểm tra xem url img có giá trị không
+        String urlImg = product.getUrl_img();
+        if (urlImg != null) {
+            holder.imgProduct.setImageURI(Uri.parse(urlImg));
         } else {
-            holder.imgUser.setImageResource(R.drawable.anh1); // Hình ảnh mặc định nếu không có
+            holder.imgProduct.setImageResource(R.drawable.anh1); // Hình ảnh mặc định nếu không có
         }
-        holder.tv_user.setText(product.getName());
+        holder.tv_name_product.setText(product.getName());
+        holder.tv_price_product.setText(String.valueOf(product.getPrice()));
+
+        holder.btn_edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(mContext, EditProductActivity.class);
+                intent.putExtra("id", product.getId());
+                intent.putExtra("name", product.getName());
+                intent.putExtra("img", product.getUrl_img());
+                intent.putExtra("cpu", product.getCpu());
+                intent.putExtra("clock_speed", product.getClock_speed());
+                intent.putExtra("flash_size", product.getFlash_size());
+                intent.putExtra("psram_size", product.getPram_size());
+                intent.putExtra("wifi_sp", product.getWifi_sp());
+                intent.putExtra("bt_sp", product.getBt_sp());
+                intent.putExtra("gpio_count", product.getGpio_channels());
+                intent.putExtra("adc_channel", product.getAdc_channels());
+                intent.putExtra("dac_channel", product.getDac_chanels());
+                intent.putExtra("product_type_id", product.getProduct_type_id());
+                intent.putExtra("brand", product.getBrand());
+                intent.putExtra("price", product.getPrice());
+                ((Activity) mContext).startActivityForResult(intent, 100);
+            }
+        });
 
         holder.btn_delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dbHelper = new DatabaseHelper(mContext);
-                dbHelper.deleteCustomer(product.getId());
+                dbHelper.deleteProduct(product.getId());
+
                 listProduct.remove(position);
                 notifyItemRemoved(position);
-                Toast.makeText(mContext, "Xoá thành công",Toast.LENGTH_SHORT).show(); // Thông báo
+                notifyItemRangeChanged(position, listProduct.size());
+
+                Toast.makeText(mContext, "Xoá thành công", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -74,15 +104,18 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.Customer
     }
 
     public class CustomerViewHolder extends RecyclerView.ViewHolder {
-        ImageView imgUser, btn_delete;
-        TextView tv_user;
+        ImageView imgProduct, btn_delete, btn_edit;
+        TextView tv_name_product, tv_price_product;
+
         public CustomerViewHolder(@NonNull View itemView) {
             super(itemView);
-            imgUser = itemView.findViewById(R.id.img_user);
-            tv_user = itemView.findViewById(R.id.tv_user);
-            btn_delete =  itemView.findViewById(R.id.btn_delete);
 
-
+            imgProduct = itemView.findViewById(R.id.img_product);
+            tv_name_product = itemView.findViewById(R.id.tv_name_product);
+            btn_delete = itemView.findViewById(R.id.btn_delete);
+            tv_price_product = itemView.findViewById(R.id.tv_price_product);
+            btn_edit = itemView.findViewById(R.id.btn_edit);
         }
     }
+
 }

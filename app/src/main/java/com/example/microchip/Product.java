@@ -1,7 +1,26 @@
 package com.example.microchip;
 
-public class Product {
-    public Product(int id, String name, String url_img, String cpu, int clock_speed, String flash_size, String pram_size, int wifi_sp, int bt_sp, int gpio_channels, int adc_channels, int dac_chanels, int product_type_id, String brand) {
+import java.io.Serializable;
+
+public class Product implements Serializable {
+
+    private int id;
+    private String name;
+    private String url_img;
+    private String cpu;
+    private int clock_speed;
+    private String flash_size;
+    private String pram_size;
+    private int wifi_sp;
+    private int bt_sp;
+    private int gpio_channels;
+    private int adc_channels;
+    private int dac_chanels;
+    private int product_type_id;
+    private String brand;
+    private Double price;
+
+    public Product(int id, String name, String url_img, String cpu, int clock_speed, String flash_size, String pram_size, int wifi_sp, int bt_sp, int gpio_channels, int adc_channels, int dac_chanels, int product_type_id, String brand, Double price) {
         this.id = id;
         this.name = name;
         this.url_img = url_img;
@@ -16,9 +35,8 @@ public class Product {
         this.dac_chanels = dac_chanels;
         this.product_type_id = product_type_id;
         this.brand = brand;
+        this.price = price;
     }
-
-    private int id;
 
     public int getId() {
         return id;
@@ -132,17 +150,12 @@ public class Product {
         this.brand = brand;
     }
 
-    private String name;
-    private String url_img;
-    private String cpu;
-    private int clock_speed;
-    private String flash_size;
-    private String pram_size;
-    private int wifi_sp;
-    private int bt_sp;
-    private int gpio_channels;
-    private int adc_channels;
-    private int dac_chanels;
-    private int product_type_id;
-    private String brand;
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
 }
