@@ -19,17 +19,17 @@
             android:name=".AddAccountActivity"
             android:exported="true"/>
         <activity
-            android:name=".AccountActivity"
+            android:name=".LoginActivity"
             android:exported="false" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".DashboardActivity"
             android:exported="false" />
         <activity
             android:name=".RegisterActivity"
             android:exported="false" />
         <activity
+            android:name=".AccountActivity"
 
-            android:name=".DashboardActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

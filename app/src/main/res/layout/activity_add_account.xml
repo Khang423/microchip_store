@@ -53,7 +53,7 @@
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/input_name"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="55dp"
             android:maxLength="31" />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -81,7 +81,7 @@
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/input_tel"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="55dp"
             android:maxLength="11" />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -109,7 +109,7 @@
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/input_mail"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="55dp"
             android:maxLength="51" />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -137,7 +137,7 @@
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/input_password"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="55dp"
             android:inputType="textPassword"
             android:maxLength="33"/>
 
