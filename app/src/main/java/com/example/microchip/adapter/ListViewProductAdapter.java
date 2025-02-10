@@ -15,33 +15,35 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.microchip.db.DatabaseHelper;
-import com.example.microchip.activity.product.EditProductActivity;
 import com.example.microchip.R;
+import com.example.microchip.activity.orderDetail.ListViewProductActivity;
+import com.example.microchip.activity.product.EditProductActivity;
+import com.example.microchip.db.OrderDetailHelper;
 import com.example.microchip.db.ProductHelper;
 import com.example.microchip.model.Product;
 
 import java.util.List;
 
-public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.CustomerViewHolder> {
+public class ListViewProductAdapter extends RecyclerView.Adapter<ListViewProductAdapter.CustomerViewHolder> {
 
     private ProductHelper dbHelper;
     private Context mContext;
     private List<Product> listProduct;
-
-    public ProductAdapter(Context mContext) {
+    private int order_id;
+    public ListViewProductAdapter(Context mContext) {
         this.mContext = mContext;
     }
 
-    public void setData(List<Product> list) {
+    public void setData(List<Product> list, int order_id) {
         this.listProduct = list;
+        this.order_id = order_id;
         notifyDataSetChanged();
     }
 
     @NonNull
     @Override
     public CustomerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_product, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_list_view_product, parent, false);
         return new CustomerViewHolder(view);
     }
 
@@ -62,42 +64,17 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.Customer
         }
         holder.tv_name_product.setText(product.getName());
         holder.tv_price_product.setText(String.valueOf(product.getPrice()));
-
-        holder.btn_edit.setOnClickListener(new View.OnClickListener() {
+        holder.btn_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(mContext, EditProductActivity.class);
-                intent.putExtra("id", product.getId());
-                intent.putExtra("name", product.getName());
-                intent.putExtra("img", product.getUrl_img());
-                intent.putExtra("cpu", product.getCpu());
-                intent.putExtra("clock_speed", product.getClock_speed());
-                intent.putExtra("flash_size", product.getFlash_size());
-                intent.putExtra("psram_size", product.getPram_size());
-                intent.putExtra("wifi_sp", product.getWifi_sp());
-                intent.putExtra("bt_sp", product.getBt_sp());
-                intent.putExtra("gpio_count", product.getGpio_channels());
-                intent.putExtra("adc_channel", product.getAdc_channels());
-                intent.putExtra("dac_channel", product.getDac_chanels());
-                intent.putExtra("product_type_id", product.getProduct_type_id());
-                intent.putExtra("brand", product.getBrand());
-                intent.putExtra("price", product.getPrice());
-                ((Activity) mContext).startActivityForResult(intent, 100);
+                int product_id = product.getId();
+                double price = product.getPrice();
 
-            }
-        });
-
-        holder.btn_delete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dbHelper = new ProductHelper(mContext);
-                dbHelper.deleteProduct(product.getId());
-
-                listProduct.remove(position);
-                notifyItemRemoved(position);
-                notifyItemRangeChanged(position, listProduct.size());
-
-                Toast.makeText(mContext, "Xoá thành công", Toast.LENGTH_SHORT).show();
+                OrderDetailHelper orderDetailHelper = new OrderDetailHelper(mContext);
+                orderDetailHelper.add(order_id,product_id,price,1);
+                Intent resultIntent = new Intent();
+                ((Activity) mContext).setResult(-1, resultIntent);
+                ((Activity) mContext).finish();
             }
         });
     }
@@ -111,7 +88,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.Customer
     }
 
     public class CustomerViewHolder extends RecyclerView.ViewHolder {
-        ImageView imgProduct, btn_delete, btn_edit;
+        ImageView imgProduct, btn_add;
         TextView tv_name_product, tv_price_product;
 
         public CustomerViewHolder(@NonNull View itemView) {
@@ -119,9 +96,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.Customer
 
             imgProduct = itemView.findViewById(R.id.img_product);
             tv_name_product = itemView.findViewById(R.id.tv_name_product);
-            btn_delete = itemView.findViewById(R.id.btn_delete);
             tv_price_product = itemView.findViewById(R.id.tv_price_product);
-            btn_edit = itemView.findViewById(R.id.btn_edit);
+            btn_add = itemView.findViewById(R.id.btn_add);
         }
     }
 

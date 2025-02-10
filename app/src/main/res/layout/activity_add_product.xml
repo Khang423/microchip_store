@@ -18,7 +18,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginStart="92dp"
             android:layout_marginTop="42dp"
-            android:text="Thêm Sản phẩm"
+            android:text="THÊM SẢN PHẨM"
             android:textColor="@color/Black"
             android:textSize="30dp"
             android:textStyle="bold">
@@ -396,15 +396,6 @@
             android:layout_marginEnd="20dp"
             android:layout_marginBottom="50dp"
             android:text="Thêm sản phẩm" />
-
-        <Spinner
-            android:id="@+id/spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="17dp"
-            android:layout_marginEnd="0dp" />
 
     </RelativeLayout>
 </ScrollView>

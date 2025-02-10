@@ -2,8 +2,12 @@ package com.example.microchip.db;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.Toast;
+
+import com.example.microchip.model.Customer;
 
 public class CustomerHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "microchip.db";
@@ -44,11 +48,11 @@ public class CustomerHelper extends SQLiteOpenHelper {
         long result = db.insert("customer", null, values);
         db.close(); // Đóng database sau khi dùng
 
-        // Kiểm tra xem có lỗi xảy ra không
+
         if (result == -1) {
-            System.out.println("Thêm khách hàng thất bại!");
+            Toast.makeText(context, "Thêm khách hàng thành công!", Toast.LENGTH_SHORT).show();
         } else {
-            System.out.println("Thêm khách hàng thành công!");
+            Toast.makeText(context, "Thêm khách hàng thành công!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -58,4 +62,32 @@ public class CustomerHelper extends SQLiteOpenHelper {
         db.delete("customer", "id = ?", new String[]{String.valueOf(customer_id)});
         db.close();
     }
+
+    public Customer getCustomerInfo(String email) {
+        db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM customer WHERE email=?", new String[]{email});
+
+        if (cursor.moveToFirst()) {
+            Customer customer = new Customer(
+                    cursor.getInt(0),//id
+                    cursor.getString(1),//name
+                    cursor.getString(2),//email
+                    cursor.getString(3),//tel
+                    cursor.getString(4),//url avatar
+                    cursor.getInt(5),//gender
+                    cursor.getString(6),//birthday
+                    cursor.getString(7),//password
+                    cursor.getString(8)//address
+            );
+            cursor.close();
+            db.close();
+            return customer;
+        }
+        cursor.close();
+        db.close();
+        return null;
+    }
+
+
+
 }

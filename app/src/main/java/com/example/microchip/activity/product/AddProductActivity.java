@@ -136,7 +136,6 @@ public class AddProductActivity extends AppCompatActivity {
         img_product_review = findViewById(R.id.img_product_review);
         change_image = findViewById(R.id.change_image);
         btn_add_product = findViewById(R.id.btn_add_product);
-        spinner = findViewById(R.id.spinner);
         filled_exposed_dropdown = findViewById(R.id.filled_exposed_dropdown);
 
     }

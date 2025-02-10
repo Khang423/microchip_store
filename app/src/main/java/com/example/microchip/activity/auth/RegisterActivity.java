@@ -20,7 +20,7 @@ import com.google.android.material.textfield.TextInputLayout;
 public class RegisterActivity extends AppCompatActivity {
     TextView btn_login;
     TextInputEditText input_mail, input_name, input_password, input_re_password;
-    TextInputLayout textInputLayoutMail, textInputLayoutName, textInputLayoutPassword;
+    TextInputLayout textInputLayoutMail, textInputLayoutName, textInputLayoutPassword,textInputLayoutRePassword;
     Button btn_register;
 
     SQLiteDatabase db = null;
@@ -45,38 +45,14 @@ public class RegisterActivity extends AppCompatActivity {
                 String name = input_name.getText().toString().trim();
                 String email = input_mail.getText().toString().trim();
                 String password = input_password.getText().toString().trim();
+                String rePassword = input_re_password.getText().toString().trim();
 
                 boolean isValid = true;
 
-                // Kiểm tra Name
-                if (name.isEmpty()) {
-                    textInputLayoutName.setError("Không được để trống!");
-                    isValid = false;
-                } else {
-                    textInputLayoutName.setError(null);
-                }
-
-                // Kiểm tra Email
-                if (email.isEmpty()) {
-                    textInputLayoutMail.setError("Không được để trống!");
-                    isValid = false;
-                } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                    textInputLayoutMail.setError("Email không hợp lệ!");
-                    isValid = false;
-                } else {
-                    textInputLayoutMail.setError(null);
-                }
-
-                // Kiểm tra Password
-                if (password.isEmpty()) {
-                    textInputLayoutPassword.setError("Không được để trống!");
-                    isValid = false;
-                } else if (password.length() < 6) {
-                    textInputLayoutPassword.setError("Mật khẩu phải từ 6 ký tự!");
-                    isValid = false;
-                } else {
-                    textInputLayoutPassword.setError(null);
-                }
+                validateField(textInputLayoutName,name);
+                validateField(textInputLayoutMail,email);
+                validateField(textInputLayoutPassword,password);
+                validateField(textInputLayoutRePassword,rePassword);
 
                 if (isValid) {
                     if (checkEmailExists(email)) {
@@ -101,11 +77,12 @@ public class RegisterActivity extends AppCompatActivity {
         textInputLayoutName = findViewById(R.id.textInputLayoutName);
         textInputLayoutMail = findViewById(R.id.textInputLayoutMail);
         textInputLayoutPassword = findViewById(R.id.textInputLayoutPassword);
+        textInputLayoutRePassword = findViewById(R.id.textInputLayoutRePassword);
     }
 
     public void addCustomer(String name, String mail, String password) {
         try {
-            db = openOrCreateDatabase("databases/microchip.db", Context.MODE_PRIVATE, null);
+            db = openOrCreateDatabase("microchip.db", Context.MODE_PRIVATE, null);
 
             db.execSQL("INSERT INTO customer( name, email, tel, avatar, gender, birthday, password, address) " +
                     "VALUES(?, ?, ?, ?, ?, ?, ?, ?)", new String[]{name, mail, "", "", "", "", password, ""});
@@ -123,11 +100,18 @@ public class RegisterActivity extends AppCompatActivity {
 
     public boolean checkEmailExists(String email) {
         Boolean rs = false;
-        db = openOrCreateDatabase("databases/microchip.db", Context.MODE_PRIVATE, null);
+        db = openOrCreateDatabase("microchip.db", Context.MODE_PRIVATE, null);
         Cursor c = db.rawQuery("Select * From customer where email = ?", new String[]{email});
         rs = c.getCount() > 0;
         c.close();
         db.close();
         return rs;
+    }
+    private void validateField(TextInputLayout layout, String value) {
+        if (value.isEmpty()) {
+            layout.setError("Không được để trống !");
+        } else {
+            layout.setError(null); // Xóa lỗi
+        }
     }
 }

@@ -10,10 +10,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.microchip.GlobalSession;
 import com.example.microchip.activity.DashboardActivity;
 import com.example.microchip.db.AuthHelper;
+import com.example.microchip.db.CustomerHelper;
 import com.example.microchip.db.DatabaseHelper;
 import com.example.microchip.R;
+import com.example.microchip.model.Customer;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -31,6 +34,7 @@ public class LoginActivity extends AppCompatActivity {
         init();
 
 
+
         btn_register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -42,24 +46,32 @@ public class LoginActivity extends AppCompatActivity {
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+
                 String username = edt_mail.getText().toString();
                 String password = edt_password.getText().toString();
 
-                if (username.isEmpty()) {
-                    layout_email.setError("Không được để trống !");
-                } else {
-                    layout_email.setError(null); // Xóa lỗi
-                }
-
-                if (password.isEmpty()) {
-                    layout_pass.setError("Không được để trống !");
-                } else {
-                    layout_pass.setError(null); // Xóa lỗi
-                }
+                validateField(layout_email,username);
+                validateField(layout_pass,password);
 
                 if (!(username.isEmpty()) && !(password.isEmpty())) {
                     AuthHelper dbHelper = new AuthHelper(LoginActivity.this);
                     if (dbHelper.checkLoginCustomer(username, password)) {
+                        CustomerHelper customerHelper = new CustomerHelper(LoginActivity.this);
+                        Customer customer = customerHelper.getCustomerInfo(username);
+                        if(customer != null){
+                            GlobalSession.getSession().setUserData(
+                                    customer.getId(),
+                                    customer.getName(),
+                                    customer.getEmail(),
+                                    customer.getTel(),
+                                    customer.getUrl_avatar(),
+                                    customer.getGender(),
+                                    customer.getBirthday(),
+                                    customer.getPassword(),
+                                    customer.getAddress()
+                            );
+                        }
                         Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
                         startActivity(intent);
                     } else {
@@ -79,5 +91,13 @@ public class LoginActivity extends AppCompatActivity {
         err_message = findViewById(R.id.error_message);
         layout_pass = findViewById(R.id.textInputLayoutMail);
         layout_email = findViewById(R.id.textInputLayoutPassword);
+    }
+
+    private void validateField(TextInputLayout layout, String value) {
+        if (value.isEmpty()) {
+            layout.setError("Không được để trống !");
+        } else {
+            layout.setError(null); // Xóa lỗi
+        }
     }
 }

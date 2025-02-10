@@ -1,9 +1,5 @@
 package com.example.microchip.activity.customer;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -20,9 +16,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.example.microchip.activity.product.EditProductActivity;
-import com.example.microchip.db.CustomerHelper;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import com.example.microchip.R;
+import com.example.microchip.db.CustomerHelper;
 import com.example.microchip.model.ProductType;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -36,7 +35,7 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class AddCustomerActivity extends AppCompatActivity {
+public class EditCustomerActivity extends AppCompatActivity {
     Button btn_change_image, btn_add;
     CircleImageView imageReview;
     TextInputEditText input_name, input_tel, input_mail, input_password,input_gender,input_birthday,input_address;
@@ -51,15 +50,15 @@ public class AddCustomerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_account);
+        setContentView(R.layout.activity_edit_account);
         init();
         //xử lý điều kiện nút chọn ảnh khi chọn sẽ yêu cầu cấp quyền
         btn_change_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (ContextCompat.checkSelfPermission(AddCustomerActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                if (ContextCompat.checkSelfPermission(EditCustomerActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(AddCustomerActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
+                    ActivityCompat.requestPermissions(EditCustomerActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
                 } else {
                     changeImage();
                 }
