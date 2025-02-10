@@ -1,13 +1,13 @@
-package com.example.microchip;
+package com.example.microchip.activity.customer;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -18,20 +18,24 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.microchip.activity.product.EditProductActivity;
+import com.example.microchip.db.CustomerHelper;
+import com.example.microchip.R;
+import com.example.microchip.model.ProductType;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class AddAccountActivity extends AppCompatActivity {
+public class AddCustomerActivity extends AppCompatActivity {
     Button btn_change_image, btn_add;
     CircleImageView imageReview;
     TextInputEditText input_name, input_tel, input_mail, input_password;
@@ -40,6 +44,7 @@ public class AddAccountActivity extends AppCompatActivity {
     private static final int PICK_IMAGE_REQUEST = 1;
     private static final int PERMISSION_REQUEST_CODE = 2;
     private Uri selectedImageUri;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,9 +55,9 @@ public class AddAccountActivity extends AppCompatActivity {
         btn_change_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (ContextCompat.checkSelfPermission(AddAccountActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                if (ContextCompat.checkSelfPermission(AddCustomerActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(AddAccountActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
+                    ActivityCompat.requestPermissions(AddCustomerActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
                 } else {
                     changeImage();
                 }
@@ -129,7 +134,7 @@ public class AddAccountActivity extends AppCompatActivity {
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
             fos.close();
 
-            Toast.makeText(this, "Hình ảnh đã lưu tại: " + file.getAbsolutePath(), Toast.LENGTH_SHORT).show();
+           // Toast.makeText(this, "Hình ảnh đã lưu tại: " + file.getAbsolutePath(), Toast.LENGTH_SHORT).show();
             return file.getAbsolutePath();
         } catch (IOException e) {
             e.printStackTrace();
@@ -157,14 +162,33 @@ public class AddAccountActivity extends AppCompatActivity {
             return;
         }
 
-        DatabaseHelper dbHelper = new DatabaseHelper(this);
+        CustomerHelper dbHelper = new CustomerHelper(this);
         try {
             dbHelper.addCustomer(name, email, tel, imgPath, 1, "04-02-2003", password, null);
-            Toast.makeText(this, "Thêm thành công!", Toast.LENGTH_SHORT).show();
+            Intent resultIntent = new Intent();
+            setResult(EditProductActivity.RESULT_OK, resultIntent);
             finish();
         } catch (SQLException e) {
             Toast.makeText(this, "Lỗi khi thêm tài khoản: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private List<ProductType> getListProductType(){
+        List<ProductType> list = new ArrayList<>();
+        db = openOrCreateDatabase("microchip.db",MODE_PRIVATE,null);
+        Cursor cursor = db.rawQuery("select * from product_type", null);
+
+        if(cursor.moveToFirst()){
+            do {
+                ProductType productType = new ProductType(
+                        cursor.getInt(0),//id
+                        cursor.getString(1)
+                );
+                list.add(productType);
+            }while(cursor.moveToNext());
+        }
+        cursor.close();
+        return list;
     }
 
 }

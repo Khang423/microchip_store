@@ -16,28 +16,38 @@
         android:theme="@style/Theme.Microchip"
         tools:targetApi="31">
         <activity
-            android:name=".AddProductActivity"
+            android:name=".activity.auth.LoginActivity"
             android:exported="false" />
         <activity
-            android:name=".EditProductActivity"
+            android:name=".activity.productType.ProductTypeActivity"
             android:exported="false" />
         <activity
-            android:name=".AccountActivity"
+            android:name=".activity.product.EditProductActivity"
             android:exported="false" />
         <activity
-            android:name=".AddAccountActivity"
+            android:name=".activity.productType.EditProductTypeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.customer.CustomerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.customer.AddCustomerActivity"
             android:exported="true" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".activity.product.ProductActivity"
             android:exported="false" />
         <activity
-            android:name=".DashboardActivity"
+            android:name=".activity.product.AddProductActivity"
             android:exported="false" />
         <activity
-            android:name=".RegisterActivity"
+            android:name=".activity.productType.AddProductTypeActivity"
             android:exported="false" />
         <activity
-            android:name=".ProductActivity"
+            android:name=".activity.auth.RegisterActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.DashboardActivity"
+
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

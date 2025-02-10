@@ -1,4 +1,4 @@
-package com.example.microchip;
+package com.example.microchip.activity.customer;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -9,22 +9,17 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.Toast;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import com.example.microchip.R;
+import com.example.microchip.adapter.CustomerAdapter;
+import com.example.microchip.model.Customer;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class AccountActivity extends AppCompatActivity {
+public class CustomerActivity extends AppCompatActivity {
 
     public static final int RESULT_PRODUCT_ACTIVITY = 1;
     SQLiteDatabase db;
@@ -50,8 +45,8 @@ public class AccountActivity extends AppCompatActivity {
         btn_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(AccountActivity.this,AddAccountActivity.class);
-                startActivity(intent);
+                Intent intent = new Intent(CustomerActivity.this, AddCustomerActivity.class);
+                startActivityForResult(intent, 100);
             }
         });
     }
@@ -83,5 +78,14 @@ public class AccountActivity extends AppCompatActivity {
 
     public void init(){
         btn_add = findViewById(R.id.btn_add);
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 100 && resultCode == RESULT_OK) {
+            // Load lại dữ liệu
+            customerAdapter.setData(getListCusTomer());
+            customerAdapter.notifyDataSetChanged();
+        }
     }
 }

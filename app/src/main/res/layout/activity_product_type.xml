@@ -12,12 +12,12 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="28dp"
         android:textColor="@color/Black"
-        android:text="Danh sách sản phẩm"
+        android:text="Danh sách loại sản phẩm"
         android:textSize="30dp"
         android:textStyle="bold" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rcv_product"
+        android:id="@+id/rcv_product_type"
         android:layout_width="390dp"
         android:layout_height="650dp"
         android:layout_marginStart="10dp"

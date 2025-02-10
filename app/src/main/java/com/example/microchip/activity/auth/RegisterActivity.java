@@ -1,4 +1,4 @@
-package com.example.microchip;
+package com.example.microchip.activity.auth;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.microchip.R;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -104,7 +105,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     public void addCustomer(String name, String mail, String password) {
         try {
-            db = openOrCreateDatabase("microchip.db", Context.MODE_PRIVATE, null);
+            db = openOrCreateDatabase("databases/microchip.db", Context.MODE_PRIVATE, null);
 
             db.execSQL("INSERT INTO customer( name, email, tel, avatar, gender, birthday, password, address) " +
                     "VALUES(?, ?, ?, ?, ?, ?, ?, ?)", new String[]{name, mail, "", "", "", "", password, ""});
@@ -122,7 +123,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     public boolean checkEmailExists(String email) {
         Boolean rs = false;
-        db = openOrCreateDatabase("microchip.db", Context.MODE_PRIVATE, null);
+        db = openOrCreateDatabase("databases/microchip.db", Context.MODE_PRIVATE, null);
         Cursor c = db.rawQuery("Select * From customer where email = ?", new String[]{email});
         rs = c.getCount() > 0;
         c.close();

@@ -1,4 +1,4 @@
-package com.example.microchip;
+package com.example.microchip.activity.product;
 
 import android.Manifest;
 import android.content.Intent;
@@ -20,6 +20,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.example.microchip.db.DatabaseHelper;
+import com.example.microchip.R;
+import com.example.microchip.db.ProductHelper;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -201,7 +204,7 @@ public class EditProductActivity extends AppCompatActivity {
             return;
         }
 
-        DatabaseHelper dbHelper = new DatabaseHelper(this);
+        ProductHelper dbHelper = new ProductHelper(this);
         try {
             dbHelper.updateProduct(id, name, imgPath, cpu, clock_speed, flash_size, psram_size, wifi_support, bt_support, gpio_count, adc_channels, dac_channels, product_type_id, brand, price);
             Toast.makeText(this, "Cập nhật thành công!", Toast.LENGTH_SHORT).show();

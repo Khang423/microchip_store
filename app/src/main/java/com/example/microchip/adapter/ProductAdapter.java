@@ -1,4 +1,4 @@
-package com.example.microchip;
+package com.example.microchip.adapter;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -15,11 +15,17 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.microchip.db.DatabaseHelper;
+import com.example.microchip.activity.product.EditProductActivity;
+import com.example.microchip.R;
+import com.example.microchip.db.ProductHelper;
+import com.example.microchip.model.Product;
+
 import java.util.List;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.CustomerViewHolder> {
 
-    private DatabaseHelper dbHelper;
+    private ProductHelper dbHelper;
     private Context mContext;
     private List<Product> listProduct;
 
@@ -83,7 +89,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.Customer
         holder.btn_delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dbHelper = new DatabaseHelper(mContext);
+                dbHelper = new ProductHelper(mContext);
                 dbHelper.deleteProduct(product.getId());
 
                 listProduct.remove(position);

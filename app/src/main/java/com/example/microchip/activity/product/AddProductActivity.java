@@ -1,4 +1,4 @@
-package com.example.microchip;
+package com.example.microchip.activity.product;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -16,10 +17,17 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.microchip.db.DatabaseHelper;
+import com.example.microchip.R;
+import com.example.microchip.db.ProductHelper;
+import com.example.microchip.model.ProductType;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -27,6 +35,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class AddProductActivity extends AppCompatActivity {
 
@@ -35,6 +46,8 @@ public class AddProductActivity extends AppCompatActivity {
     TextInputEditText input_name, input_product_type, input_cpu, input_clock_speed, input_flash_ram, input_psram,
             input_wifi, input_bt, input_gpio, input_adc_channel, input_dac_channel, input_brand, input_price;
 
+    AutoCompleteTextView filled_exposed_dropdown;
+    Spinner spinner;
     ImageView img_product_review;
     Button change_image, btn_add_product;
 
@@ -42,13 +55,36 @@ public class AddProductActivity extends AppCompatActivity {
     private static final int PICK_IMAGE_REQUEST = 1;
     private static final int PERMISSION_REQUEST_CODE = 2;
     private Uri selectedImageUri;
+    List<ProductType> productTypeList;
+    HashMap<String, Integer> productTypeMap = new HashMap<>();
 
+    private Integer selectedProductTypeId = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_product);
 
         init();
+        productTypeList = getListProduct();
+
+        List<String> strProductTypeList = new ArrayList<>();
+        for(ProductType product : productTypeList) {
+            strProductTypeList.add(product.getName());
+            productTypeMap.put(product.getName(),product.getId());
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, strProductTypeList);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        filled_exposed_dropdown.setAdapter(adapter);
+
+        filled_exposed_dropdown.setOnItemClickListener((parent, view, position, id) -> {
+            String selectedItem = adapter.getItem(position);
+            if (selectedItem != null && productTypeMap.containsKey(selectedItem)) {
+                selectedProductTypeId = productTypeMap.get(selectedItem); // Lưu ID của loại sản phẩm
+                Toast.makeText(getApplicationContext(), "Bạn chọn: " + selectedItem + " - ID: " + selectedProductTypeId, Toast.LENGTH_SHORT).show();
+            }
+        });
 
         change_image.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,6 +136,9 @@ public class AddProductActivity extends AppCompatActivity {
         img_product_review = findViewById(R.id.img_product_review);
         change_image = findViewById(R.id.change_image);
         btn_add_product = findViewById(R.id.btn_add_product);
+        spinner = findViewById(R.id.spinner);
+        filled_exposed_dropdown = findViewById(R.id.filled_exposed_dropdown);
+
     }
     // function chọn ảnh
     private void changeImage() {
@@ -183,7 +222,13 @@ public class AddProductActivity extends AppCompatActivity {
         int gpio_count = parseIntSafe(input_gpio.getText().toString());
         int adc_channels = parseIntSafe(input_adc_channel.getText().toString());
         int dac_channels = parseIntSafe(input_dac_channel.getText().toString());
-        int product_type_id = parseIntSafe(input_product_type.getText().toString());
+
+        if (selectedProductTypeId == null) {
+            Toast.makeText(this, "Vui lòng chọn loại sản phẩm hợp lệ!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        int product_type_id = selectedProductTypeId;
 
         double price = 0.0;
         if (!priceText.isEmpty()) {
@@ -203,7 +248,7 @@ public class AddProductActivity extends AppCompatActivity {
         }
 
         // Thêm dữ liệu vào database
-        DatabaseHelper dbHelper = new DatabaseHelper(this);
+        ProductHelper dbHelper = new ProductHelper(this);
         try {
             dbHelper.addProduct(name, imgPath, cpu, clock_speed, flash_size, psram_size,
                     wifi_support, bt_support, gpio_count, adc_channels,
@@ -223,5 +268,23 @@ public class AddProductActivity extends AppCompatActivity {
         } catch (NumberFormatException e) {
             return 0;
         }
+    }
+
+    private List<ProductType> getListProduct(){
+        List<ProductType> list = new ArrayList<>();
+        db = openOrCreateDatabase("microchip.db",MODE_PRIVATE,null);
+        Cursor cursor = db.rawQuery("select * from product_type", null);
+
+        if(cursor.moveToFirst()){
+            do {
+                ProductType productType = new ProductType(
+                        cursor.getInt(0),//id
+                        cursor.getString(1)
+                );
+                list.add(productType);
+            }while(cursor.moveToNext());
+        }
+        cursor.close();
+        return list;
     }
 }

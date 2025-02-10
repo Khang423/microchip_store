@@ -1,4 +1,4 @@
-package com.example.microchip;
+package com.example.microchip.model;
 
 import java.util.Date;
 

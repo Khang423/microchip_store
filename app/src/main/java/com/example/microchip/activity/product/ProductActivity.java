@@ -1,18 +1,19 @@
-package com.example.microchip;
+package com.example.microchip.activity.product;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
+
+import com.example.microchip.R;
+import com.example.microchip.adapter.ProductAdapter;
+import com.example.microchip.model.Product;
 
 import java.util.ArrayList;
 import java.util.List;

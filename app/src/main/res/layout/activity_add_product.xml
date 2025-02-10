@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".AddProductActivity">
+    tools:context=".activity.product.AddProductActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -53,28 +53,25 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textInputLayoutProductType"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="80dp"
             android:layout_below="@+id/textInputLayoutName"
             android:layout_marginStart="25dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="25dp"
-            android:hint="Loại sản phẩm"
-            app:counterEnabled="true"
-            app:counterMaxLength="30"
-            app:endIconMode="clear_text"
             app:helperTextTextColor="@color/Red"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textInputLayoutName">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/input_product_type"
+            <AutoCompleteTextView
+                android:id="@+id/filled_exposed_dropdown"
                 android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:maxLength="31" />
+                android:layout_height="wrap_content"
+                android:text="Chọn loại sản phẩm"
+                android:inputType="none"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -399,6 +396,15 @@
             android:layout_marginEnd="20dp"
             android:layout_marginBottom="50dp"
             android:text="Thêm sản phẩm" />
+
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="17dp"
+            android:layout_marginEnd="0dp" />
 
     </RelativeLayout>
 </ScrollView>

@@ -1,13 +1,11 @@
-package com.example.microchip;
+package com.example.microchip.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,11 +13,16 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.microchip.db.CustomerHelper;
+import com.example.microchip.db.DatabaseHelper;
+import com.example.microchip.R;
+import com.example.microchip.model.Customer;
+
 import java.util.List;
 
 public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.CustomerViewHolder> {
 
-    private DatabaseHelper dbHelper;
+    private CustomerHelper dbHelper;
     private Context mContext;
     private List<Customer> mlistCustomer;
 
@@ -58,7 +61,7 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.Custom
         holder.btn_delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dbHelper = new DatabaseHelper(mContext);
+                dbHelper = new CustomerHelper(mContext);
                 dbHelper.deleteCustomer(cus.getId());
                 mlistCustomer.remove(position);
                 notifyItemRemoved(position);
