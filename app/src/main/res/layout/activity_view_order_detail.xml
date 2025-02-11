@@ -20,21 +20,11 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rcv_order_detail"
-        android:layout_width="457dp"
-        android:layout_height="294dp"
+        android:layout_width="392dp"
+        android:layout_height="371dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="100dp"
         android:layout_marginEnd="10dp" />
-
-    <ImageView
-        android:id="@+id/btn_add"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="50dp"
-        android:layout_marginBottom="148dp"
-        android:src="@drawable/ic_add" />
 
     <TextView
         android:id="@+id/tv_total"
@@ -44,7 +34,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginStart="132dp"
-        android:layout_marginBottom="168dp"
+        android:layout_marginBottom="91dp"
         android:text="Tổng tiền : "
         android:textColor="@color/Black"
         android:textSize="20dp"
@@ -57,9 +47,22 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginStart="23dp"
-        android:layout_marginBottom="168dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginBottom="91dp"
         android:text="Tổng tiền : "
+        android:textColor="@color/Black"
+        android:textSize="20dp"
+        android:textStyle="bold" />
+    <TextView
+        android:id="@+id/tv_tot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="270dp"
+        android:layout_marginBottom="91dp"
+        android:text="VNĐ"
         android:textColor="@color/Black"
         android:textSize="20dp"
         android:textStyle="bold" />
@@ -136,18 +139,4 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <Button
-        android:id="@+id/btn_order"
-        android:layout_width="match_parent"
-        android:layout_height="65dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="60dp"
-        android:background="@color/BlanchedAlmond"
-        android:text="Đặt hàng"
-        android:textSize="20dp"
-        android:textStyle="bold" />
 </RelativeLayout>

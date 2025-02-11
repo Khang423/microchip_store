@@ -11,12 +11,13 @@ import android.widget.Button;
 import com.example.microchip.GlobalSession;
 import com.example.microchip.R;
 import com.example.microchip.activity.customer.CustomerActivity;
+import com.example.microchip.activity.order.HasOrderedActivity;
 import com.example.microchip.activity.order.OrderActivity;
 import com.example.microchip.activity.product.ProductActivity;
 import com.example.microchip.activity.productType.ProductTypeActivity;
 
 public class DashboardActivity extends AppCompatActivity {
-    Button btn_account, btn_product, btn_product_type,btn_order;
+    Button btn_account, btn_product, btn_product_type,btn_order,btn_has_ordered,btn_statistics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +55,20 @@ public class DashboardActivity extends AppCompatActivity {
             }
         });
 
+        btn_has_ordered.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(DashboardActivity.this, HasOrderedActivity.class);
+                startActivity(intent);
+            }
+        });
+        btn_statistics.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(DashboardActivity.this, StatisticAcitivity.class);
+                startActivity(intent);
+            }
+        });
     }
     public void getValueFromSession(){
         int id = GlobalSession.getSession().getId();
@@ -65,20 +80,13 @@ public class DashboardActivity extends AppCompatActivity {
         String birthday = GlobalSession.getSession().getBirthday();
         String password = GlobalSession.getSession().getPassword();
         String address = GlobalSession.getSession().getAddress();
-        Log.d("User Info", "Thông tin user: " +
-                "\nTên: " + name +
-                "\nEmail: " + email +
-                "\nSĐT: " + tel +
-                "\nAvatar: " + url +
-                "\nGiới tính: " + gender +
-                "\nNgày sinh: " + birthday +
-                "\nĐịa chỉ: " + address);
-
     }
     public void init() {
         btn_account = findViewById(R.id.btn_account);
         btn_product = findViewById(R.id.btn_product);
         btn_product_type = findViewById(R.id.btn_product_type);
         btn_order = findViewById(R.id.btn_order);
+        btn_has_ordered = findViewById(R.id.btn_has_ordered);
+        btn_statistics = findViewById(R.id.btn_statistics);
     }
 }

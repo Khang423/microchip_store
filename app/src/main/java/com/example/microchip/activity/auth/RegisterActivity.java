@@ -20,7 +20,7 @@ import com.google.android.material.textfield.TextInputLayout;
 public class RegisterActivity extends AppCompatActivity {
     TextView btn_login;
     TextInputEditText input_mail, input_name, input_password, input_re_password;
-    TextInputLayout textInputLayoutMail, textInputLayoutName, textInputLayoutPassword,textInputLayoutRePassword;
+    TextInputLayout textInputLayoutMail, textInputLayoutName, textInputLayoutPassword, textInputLayoutRePassword;
     Button btn_register;
 
     SQLiteDatabase db = null;
@@ -49,10 +49,19 @@ public class RegisterActivity extends AppCompatActivity {
 
                 boolean isValid = true;
 
-                validateField(textInputLayoutName,name);
-                validateField(textInputLayoutMail,email);
-                validateField(textInputLayoutPassword,password);
-                validateField(textInputLayoutRePassword,rePassword);
+                // Kiểm tra từng trường nhập
+                if (!validateField(textInputLayoutName, name)) isValid = false;
+                if (!validateField(textInputLayoutMail, email)) isValid = false;
+                if (!validateField(textInputLayoutPassword, password)) isValid = false;
+                if (!validateField(textInputLayoutRePassword, rePassword)) isValid = false;
+
+                // Kiểm tra mật khẩu và xác nhận mật khẩu có khớp không
+                if (!password.equals(rePassword)) {
+                    textInputLayoutRePassword.setError("Mật khẩu xác nhận không khớp!");
+                    isValid = false;
+                } else {
+                    textInputLayoutRePassword.setError(null);
+                }
 
                 if (isValid) {
                     if (checkEmailExists(email)) {
@@ -64,7 +73,6 @@ public class RegisterActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 
     public void init() {
@@ -107,11 +115,14 @@ public class RegisterActivity extends AppCompatActivity {
         db.close();
         return rs;
     }
-    private void validateField(TextInputLayout layout, String value) {
+
+    private boolean validateField(TextInputLayout layout, String value) {
         if (value.isEmpty()) {
-            layout.setError("Không được để trống !");
+            layout.setError("Không được để trống!");
+            return false;
         } else {
-            layout.setError(null); // Xóa lỗi
+            layout.setError(null);
+            return true;
         }
     }
 }

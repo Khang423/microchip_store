@@ -74,25 +74,25 @@
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             android:layout_weight="1"
-            android:text="Loại sản phẩm" />
+            android:text="Loại SP" />
 
         <Button
-            android:id="@+id/btn_role"
+            android:id="@+id/btn_has_ordered"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             android:layout_weight="1"
-            android:text="Vai Trò" />
+            android:text="Đơn đã đặt" />
 
         <Button
-            android:id="@+id/btn_storage"
+            android:id="@+id/btn_statistics"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             android:layout_weight="1"
-            android:text="Kho Hàng" />
+            android:text="Thống kê" />
     </LinearLayout>
 
     <com.google.android.material.bottomappbar.BottomAppBar

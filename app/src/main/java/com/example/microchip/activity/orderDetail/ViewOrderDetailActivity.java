@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -17,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.microchip.GlobalSession;
 import com.example.microchip.R;
 import com.example.microchip.adapter.OrderDetailAdapter;
+import com.example.microchip.adapter.ViewOrderDetailAdapter;
 import com.example.microchip.db.OrderDetailHelper;
 import com.example.microchip.db.OrderHelper;
 import com.example.microchip.model.OrderDetail;
@@ -29,13 +29,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OrderDetailActivity extends AppCompatActivity {
+public class ViewOrderDetailActivity extends AppCompatActivity {
 
     public static final int RESULT_PRODUCT_ACTIVITY = 1;
     SQLiteDatabase db;
     OrderDetailHelper orderDetailHelper;
     private RecyclerView rcvOrderDetail;
-    private OrderDetailAdapter orderDetailAdapter;
+    private ViewOrderDetailAdapter viewOrderDetailAdapter;
     private ImageView btn_add;
     TextView title, tv_total;
     TextInputLayout textInputLayoutAddress, textInputLayoutCustomerName;
@@ -47,12 +47,12 @@ public class OrderDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_order_detail);
+        setContentView(R.layout.activity_view_order_detail);
         init();
         // lấy order từ intent
         order_id = getIntent().getIntExtra("order_id", -1);
 
-        orderDetailAdapter = new OrderDetailAdapter(this);
+        viewOrderDetailAdapter = new ViewOrderDetailAdapter(this);
         String address = GlobalSession.getSession().getAddress();
         String name = GlobalSession.getSession().getName();
         orderDetailHelper = new OrderDetailHelper(this);
@@ -62,39 +62,16 @@ public class OrderDetailActivity extends AppCompatActivity {
         tv_total.setText(String.valueOf(total_price));
         input_address.setText(address);
         input_customer_name.setText(name);
+        input_address.setEnabled(false);
+        input_customer_name.setEnabled(false);
+        input_note.setEnabled(false);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
         rcvOrderDetail.setLayoutManager(linearLayoutManager);
 
-        orderDetailAdapter.setData(getListOrderDetail());
-        rcvOrderDetail.setAdapter(orderDetailAdapter);
+        viewOrderDetailAdapter.setData(getListOrderDetail());
+        rcvOrderDetail.setAdapter(viewOrderDetailAdapter);
 
-        btn_add.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                order_id = getIntent().getIntExtra("order_id", -1);
-                Intent intent = new Intent(OrderDetailActivity.this, ListViewProductActivity.class);
-                intent.putExtra("order_id", order_id);
-                startActivityForResult(intent, 100);
-            }
-        });
-        btn_order.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String address = input_address.getText().toString();
-                double total = Double.parseDouble(tv_total.getText().toString());
-
-                ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                String formattedTime = now.format(formatter);
-
-                OrderHelper orderHelper = new OrderHelper(OrderDetailActivity.this);
-                orderHelper.order(order_id,total,formattedTime,address);
-                Intent resultIntent = new Intent();
-                setResult(RESULT_OK, resultIntent);
-                finish();
-            }
-        });
     }
 
     private List<OrderDetail> getListOrderDetail() {
@@ -128,7 +105,6 @@ public class OrderDetailActivity extends AppCompatActivity {
         textInputLayoutAddress = findViewById(R.id.textInputLayoutAddress);
         input_customer_name = findViewById(R.id.input_customer_name);
         textInputLayoutCustomerName = findViewById(R.id.textInputLayoutCustomerName);
-        btn_order = findViewById(R.id.btn_order);
         input_note = findViewById(R.id.input_note);
     }
 
@@ -136,8 +112,8 @@ public class OrderDetailActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 100 && resultCode == RESULT_OK) {
             // Load lại dữ liệu
-            orderDetailAdapter.setData(getListOrderDetail());
-            orderDetailAdapter.notifyDataSetChanged();
+            viewOrderDetailAdapter.setData(getListOrderDetail());
+            viewOrderDetailAdapter.notifyDataSetChanged();
             double total_price = orderDetailHelper.totalPrice(order_id);
             tv_total.setText(String.valueOf(total_price));
         }
