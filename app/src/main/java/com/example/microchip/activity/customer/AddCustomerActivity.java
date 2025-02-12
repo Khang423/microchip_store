@@ -5,6 +5,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -20,6 +22,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.microchip.activity.auth.RegisterActivity;
 import com.example.microchip.activity.product.EditProductActivity;
 import com.example.microchip.db.CustomerHelper;
 import com.example.microchip.R;
@@ -32,6 +35,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -39,8 +43,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class AddCustomerActivity extends AppCompatActivity {
     Button btn_change_image, btn_add;
     CircleImageView imageReview;
-    TextInputEditText input_name, input_tel, input_mail, input_password,input_gender,input_birthday,input_address;
-    TextInputLayout textInputLayoutName,textInputLayoutTel,textInputLayoutMail,textInputLayoutPassword,textInputLayoutGender,textInputLayoutBirthday,textInputLayoutAddress;
+    TextInputEditText input_name, input_tel, input_mail, input_password, input_gender, input_birthday, input_address;
+    TextInputLayout textInputLayoutName, textInputLayoutTel, textInputLayoutMail, textInputLayoutPassword, textInputLayoutGender, textInputLayoutBirthday, textInputLayoutAddress;
 
     SQLiteDatabase db = null;
     private static final int PICK_IMAGE_REQUEST = 1;
@@ -54,6 +58,8 @@ public class AddCustomerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_account);
         init();
         //xử lý điều kiện nút chọn ảnh khi chọn sẽ yêu cầu cấp quyền
+        input_birthday.setOnClickListener(v -> showDatePickerDialog());
+
         btn_change_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -125,7 +131,7 @@ public class AddCustomerActivity extends AppCompatActivity {
         if (imageUri == null) return null;
 
         try {
-            File directory = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "MyAppImages");
+            File directory = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "Customer");
             if (!directory.exists() && !directory.mkdirs()) {
                 Toast.makeText(this, "Không thể tạo thư mục!", Toast.LENGTH_SHORT).show();
                 return null;
@@ -146,7 +152,7 @@ public class AddCustomerActivity extends AppCompatActivity {
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
             fos.close();
 
-           // Toast.makeText(this, "Hình ảnh đã lưu tại: " + file.getAbsolutePath(), Toast.LENGTH_SHORT).show();
+            // Toast.makeText(this, "Hình ảnh đã lưu tại: " + file.getAbsolutePath(), Toast.LENGTH_SHORT).show();
             return file.getAbsolutePath();
         } catch (IOException e) {
             e.printStackTrace();
@@ -197,37 +203,22 @@ public class AddCustomerActivity extends AppCompatActivity {
             return;
         }
 
+
         CustomerHelper dbHelper = new CustomerHelper(this);
         try {
-            dbHelper.addCustomer(name, email, tel, imgPath, gender, birthday, password, address);
-            //Toast.makeText(this, "Thêm tài khoản thành công!", Toast.LENGTH_SHORT).show();
-
-            Intent resultIntent = new Intent();
-            setResult(RESULT_OK, resultIntent);
-            finish();
+            if(checkEmailExists(email)){
+                Toast.makeText(AddCustomerActivity.this, "Email đã tồn tại", Toast.LENGTH_SHORT).show();
+            }else{
+                dbHelper.addCustomer(name, email, tel, imgPath, gender, birthday, password, address);
+                Intent resultIntent = new Intent();
+                setResult(RESULT_OK, resultIntent);
+                finish();
+            }
         } catch (SQLException e) {
             Toast.makeText(this, "Lỗi khi thêm tài khoản: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
-
-    private List<ProductType> getListProductType(){
-        List<ProductType> list = new ArrayList<>();
-        db = openOrCreateDatabase("microchip.db",MODE_PRIVATE,null);
-        Cursor cursor = db.rawQuery("select * from product_type", null);
-
-        if(cursor.moveToFirst()){
-            do {
-                ProductType productType = new ProductType(
-                        cursor.getInt(0),//id
-                        cursor.getString(1)
-                );
-                list.add(productType);
-            }while(cursor.moveToNext());
-        }
-        cursor.close();
-        return list;
-    }
 
     private void validateField(TextInputLayout layout, String value) {
         if (value.isEmpty()) {
@@ -235,6 +226,30 @@ public class AddCustomerActivity extends AppCompatActivity {
         } else {
             layout.setError(null); // Xóa lỗi
         }
+    }
+
+    private void showDatePickerDialog() {
+        final Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this, (view, year1, month1, dayOfMonth) -> {
+            String selectedDate = String.format("%04d-%02d-%02d", year1, month1 + 1, dayOfMonth);
+            input_birthday.setText(selectedDate);
+        }, year, month, day);
+        datePickerDialog.show();
+    }
+
+
+    public boolean checkEmailExists(String email) {
+        Boolean rs = false;
+        db = openOrCreateDatabase("microchip.db", Context.MODE_PRIVATE, null);
+        Cursor c = db.rawQuery("Select * From customer where email = ?", new String[]{email});
+        rs = c.getCount() > 0;
+        c.close();
+        db.close();
+        return rs;
     }
 
 }

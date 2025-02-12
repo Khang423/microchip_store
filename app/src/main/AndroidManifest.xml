@@ -50,6 +50,9 @@
             android:name=".activity.customer.CustomerActivity"
             android:exported="false" />
         <activity
+            android:name=".activity.customer.EditCustomerActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.customer.AddCustomerActivity"
             android:exported="true" />
         <activity

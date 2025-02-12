@@ -56,6 +56,30 @@ public class CustomerHelper extends SQLiteOpenHelper {
         }
     }
 
+    public void update(int id, String name, String email, String tel, String url_avatar, int gender, String birthday, String password, String address) {
+        db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        // Gán dữ liệu vào ContentValues
+        values.put("name", name);
+        values.put("email", email);
+        values.put("tel", tel);
+        values.put("avatar", url_avatar);
+        values.put("gender", gender);
+        values.put("birthday", birthday);
+        values.put("password", password);
+        values.put("address", address);
+
+        // Thêm dữ liệu vào bảng customer
+        long result = db.update("customer",values, "id = ?",new String[]{String.valueOf(id)});
+        db.close(); // Đóng database sau khi dùng
+
+
+        if (result == -1) {
+            Toast.makeText(context, "Cập nhật khách hàng thành công!", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context, "Cập nhật hàng thành công!", Toast.LENGTH_SHORT).show();
+        }
+    }
 
     public void deleteCustomer(int customer_id) {
         db = this.getWritableDatabase();

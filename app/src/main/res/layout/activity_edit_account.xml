@@ -180,7 +180,9 @@
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/input_birthday"
             android:layout_width="match_parent"
-            android:layout_height="55dp" />
+            android:focusable="false"
+            android:layout_height="55dp"
+            android:inputType="none"/>
 
     </com.google.android.material.textfield.TextInputLayout>
     <com.google.android.material.textfield.TextInputLayout
@@ -210,12 +212,12 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
-        android:id="@+id/btn_add"
+        android:id="@+id/btn_edit"
         android:layout_width="360dp"
         android:layout_height="60dp"
         android:layout_marginBottom="12dp"
         android:backgroundTint="@color/Purple"
-        android:text="Thêm Tài Khoản"
+        android:text="Cập nhật"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"

@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -22,14 +23,19 @@ import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 public class StatisticAcitivity extends AppCompatActivity {
     private BarChart barchart;
     Button check;
-    private TextInputEditText inputFromDate,inputToDate;
+    TextInputEditText inputFromDate,inputToDate;
+    TextInputLayout layoutToDate,layoutFromDate;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,33 +44,48 @@ public class StatisticAcitivity extends AppCompatActivity {
 
         inputFromDate.setOnClickListener(v -> showDatePickerDialogFromDate());
         inputToDate.setOnClickListener(v -> showDatePickerDialogToDate());
+
         check.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String fromData = inputFromDate.getText().toString();
-                String toData = inputFromDate.getText().toString();
-                setupBarChart(fromData,toData);
+                String fromDate = inputFromDate.getText().toString();
+                String toDate = inputToDate.getText().toString();
+
+                if(fromDate.isEmpty()){
+                    layoutFromDate.setError("Không được để trống");
+                }else{
+                    layoutFromDate.setError(null);
+                }
+                if(toDate.isEmpty()){
+                    layoutToDate.setError("Không được để trống");
+                }else{
+                    layoutToDate.setError(null);
+                }
+
+                setupBarChart(fromDate,toDate);
             }
         });
 
     }
     private void setupBarChart(String fromDate,String toDate) {
         OrderHelper orderHelper = new OrderHelper(StatisticAcitivity.this);
+        ArrayList<String> dateLabel =  new ArrayList<>();
+        ArrayList<BarEntry> entries = orderHelper.getData(fromDate,toDate,dateLabel);
+        Log.d("entries :", ""+entries);
 
-        ArrayList<BarEntry> entries = orderHelper.getData(fromDate,toDate);
         BarDataSet dataSet = new BarDataSet(entries, "Doanh thu theo ngày");
         dataSet.setColors(ColorTemplate.MATERIAL_COLORS);
         dataSet.setValueTextColor(Color.BLACK);
         dataSet.setValueTextSize(12f);
 
+
         BarData barData = new BarData(dataSet);
         barchart.setData(barData);
 
-        // Định dạng trục X để hiển thị ngày
         XAxis xAxis = barchart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setGranularity(1f); // Đảm bảo từng ngày hiển thị một lần
-        xAxis.setValueFormatter(new IndexAxisValueFormatter(getDatesList()));
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(dateLabel));
 
         Description description = new Description();
         description.setText("Thống kê doanh thu theo ngày");
@@ -73,20 +94,7 @@ public class StatisticAcitivity extends AppCompatActivity {
 
     }
 
-    private ArrayList<String> getDatesList() {
-        ArrayList<String> dates = new ArrayList<>();
-        OrderHelper orderHelper = new OrderHelper(StatisticAcitivity.this);
-        SQLiteDatabase db = orderHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT DISTINCT created_at FROM [order] ORDER BY created_at ASC", null);
 
-        while (cursor.moveToNext()) {
-            dates.add(cursor.getString(0)); // Lấy danh sách ngày
-        }
-
-        cursor.close();
-        db.close();
-        return dates;
-    }
 
     private void showDatePickerDialogFromDate() {
         final Calendar calendar = Calendar.getInstance();
@@ -119,5 +127,7 @@ public class StatisticAcitivity extends AppCompatActivity {
         inputFromDate = findViewById(R.id.input_from_date);
         check = findViewById(R.id.btn_check);
         inputToDate = findViewById(R.id.input_to_date);
+        layoutFromDate = findViewById(R.id.layoutFromDate);
+        layoutToDate = findViewById(R.id.layoutToDate);
     }
 }

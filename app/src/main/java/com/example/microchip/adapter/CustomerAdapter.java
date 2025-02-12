@@ -1,7 +1,9 @@
 package com.example.microchip.adapter;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +15,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.microchip.activity.customer.EditCustomerActivity;
 import com.example.microchip.db.CustomerHelper;
 import com.example.microchip.db.DatabaseHelper;
 import com.example.microchip.R;
@@ -68,6 +71,24 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.Custom
                 Toast.makeText(mContext, "Xoá thành công",Toast.LENGTH_SHORT).show(); // Thông báo
             }
         });
+
+        holder.btn_edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(mContext, EditCustomerActivity.class);
+                intent.putExtra("id", cus.getId());
+                intent.putExtra("name", cus.getName());
+                intent.putExtra("email", cus.getEmail());
+                intent.putExtra("tel", cus.getTel());
+                intent.putExtra("avatar", cus.getUrl_avatar());
+                intent.putExtra("gender", cus.getGender());
+                intent.putExtra("birthday", cus.getBirthday());
+                intent.putExtra("password", cus.getPassword());
+                intent.putExtra("address", cus.getAddress());
+                ((Activity) mContext).startActivityForResult(intent, 100);
+
+            }
+        });
     }
 
     @Override
@@ -79,13 +100,14 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.Custom
     }
 
     public class CustomerViewHolder extends RecyclerView.ViewHolder {
-        ImageView imgUser, btn_delete;
+        ImageView imgUser, btn_delete,btn_edit;
         TextView tv_user;
         public CustomerViewHolder(@NonNull View itemView) {
             super(itemView);
             imgUser = itemView.findViewById(R.id.img_user);
             tv_user = itemView.findViewById(R.id.tv_user);
             btn_delete =  itemView.findViewById(R.id.btn_delete);
+            btn_edit =  itemView.findViewById(R.id.btn_edit);
 
 
         }
