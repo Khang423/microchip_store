@@ -10,26 +10,29 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/app_bar_layout"
+            android:background="@color/RoyalBlue"
             android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginStart="81dp"
-            android:layout_marginTop="42dp"
-            android:text="Cập nhật sản phẩm"
-            android:textColor="@color/Black"
-            android:textSize="30dp"
-            android:textStyle="bold"></TextView>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:titleTextColor="@color/White"
+                app:titleCentered="true"
+                app:title="Thêm sản phẩm" />
+
+        </com.google.android.material.appbar.AppBarLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textInputLayoutName"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="80dp"
-            android:layout_below="@+id/title"
+            android:layout_below="@+id/app_bar_layout"
             android:layout_marginStart="25dp"
             android:layout_marginTop="18dp"
             android:layout_marginEnd="25dp"
@@ -384,6 +387,7 @@
             android:layout_alignParentEnd="true"
             android:layout_marginStart="135dp"
             android:layout_marginTop="20dp"
+            android:backgroundTint="@color/RoyalBlue"
             android:layout_marginEnd="136dp"
             android:text="Chọn ảnh " />
 
@@ -397,6 +401,7 @@
             android:layout_marginStart="20dp"
             android:layout_marginTop="20dp"
             android:layout_marginEnd="20dp"
+            android:backgroundTint="@color/RoyalBlue"
             android:layout_marginBottom="50dp"
             android:text="Thêm sản phẩm" />
 

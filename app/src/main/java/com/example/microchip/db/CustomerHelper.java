@@ -84,7 +84,10 @@ public class CustomerHelper extends SQLiteOpenHelper {
     public void deleteCustomer(int customer_id) {
         db = this.getWritableDatabase();
         db.delete("customer", "id = ?", new String[]{String.valueOf(customer_id)});
+        db.delete("[order]", "customer_id = ?", new String[]{String.valueOf(customer_id)});
         db.close();
+//        AuthHelper authHelper = new AuthHelper(context);
+//        authHelper.logOut();
     }
 
     public Customer getCustomerInfo(String email) {

@@ -68,7 +68,7 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.Custom
                 dbHelper.deleteCustomer(cus.getId());
                 mlistCustomer.remove(position);
                 notifyItemRemoved(position);
-                Toast.makeText(mContext, "Xoá thành công",Toast.LENGTH_SHORT).show(); // Thông báo
+                Toast.makeText(mContext, "Xoá thành công",Toast.LENGTH_SHORT).show();
             }
         });
 

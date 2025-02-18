@@ -7,6 +7,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.widget.Toast;
 
+import com.example.microchip.GlobalSession;
+
+import at.favre.lib.crypto.bcrypt.BCrypt;
+
 public class AuthHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "microchip.db";
     private static final int DATABASE_VERSION = 1;
@@ -35,14 +39,18 @@ public class AuthHelper extends SQLiteOpenHelper {
 
         try {
             db = this.getReadableDatabase();
-            String query = "SELECT * FROM customer WHERE email = ? AND password = ?";
-            cursor = db.rawQuery(query, new String[]{mail, password});
+            String query = "SELECT password FROM customer WHERE email = ?";
+            cursor = db.rawQuery(query, new String[]{mail});
 
-            result = cursor != null && cursor.moveToFirst();
+            if (cursor != null && cursor.moveToFirst()) {
+                String hashedPasswordFromDB = cursor.getString(0);
+
+                // Kiểm tra mật khẩu với BCrypt
+                result = BCrypt.verifyer().verify(password.toCharArray(), hashedPasswordFromDB).verified;
+            }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-
             if (cursor != null) {
                 cursor.close();
             }
@@ -51,5 +59,10 @@ public class AuthHelper extends SQLiteOpenHelper {
             }
         }
         return result;
+    }
+
+
+    public void logOut() {
+        GlobalSession.getSession().clearSession();
     }
 }

@@ -1,9 +1,7 @@
 package com.example.microchip.adapter;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,25 +11,31 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.microchip.R;
-import com.example.microchip.activity.orderDetail.ListViewProductActivity;
-import com.example.microchip.activity.product.EditProductActivity;
-import com.example.microchip.db.OrderDetailHelper;
-import com.example.microchip.db.ProductHelper;
 import com.example.microchip.model.Product;
+import com.example.microchip.model.ProductData;
+import com.example.microchip.model.SharedViewModel;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class ListViewProductAdapter extends RecyclerView.Adapter<ListViewProductAdapter.CustomerViewHolder> {
 
-    private ProductHelper dbHelper;
     private Context mContext;
     private List<Product> listProduct;
     private int order_id;
-    public ListViewProductAdapter(Context mContext) {
+    private SharedViewModel sharedViewModel;
+
+    // 🔹 Truyền FragmentActivity vào adapter để sử dụng ViewModel
+    public ListViewProductAdapter(FragmentActivity activity, Context mContext) {
         this.mContext = mContext;
+        this.sharedViewModel = new ViewModelProvider(activity).get(SharedViewModel.class);
     }
 
     public void setData(List<Product> list, int order_id) {
@@ -43,11 +47,10 @@ public class ListViewProductAdapter extends RecyclerView.Adapter<ListViewProduct
     @NonNull
     @Override
     public CustomerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_list_view_product, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_fragment_product, parent, false);
         return new CustomerViewHolder(view);
     }
 
-    // ham set du lieu cho adapter
     @SuppressLint("RecyclerView")
     @Override
     public void onBindViewHolder(@NonNull CustomerViewHolder holder, int position) {
@@ -55,45 +58,35 @@ public class ListViewProductAdapter extends RecyclerView.Adapter<ListViewProduct
         if (product == null) {
             return;
         }
-        // kiểm tra xem url img có giá trị không
-        String urlImg = product.getUrl_img();
-        if (urlImg != null) {
-            holder.imgProduct.setImageURI(Uri.parse(urlImg));
-        } else {
-            holder.imgProduct.setImageResource(R.drawable.anh1); // Hình ảnh mặc định nếu không có
-        }
-        holder.tv_name_product.setText(product.getName());
-        holder.tv_price_product.setText(String.valueOf(product.getPrice()));
+        setUpUI(product, holder);
+
         holder.btn_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int product_id = product.getId();
-                double price = product.getPrice();
-
-                OrderDetailHelper orderDetailHelper = new OrderDetailHelper(mContext);
-                orderDetailHelper.add(order_id,product_id,price,1);
-                Intent resultIntent = new Intent();
-                ((Activity) mContext).setResult(-1, resultIntent);
-                ((Activity) mContext).finish();
+                ProductData productData = new ProductData(
+                        product.getId(),
+                        product.getPrice(),
+                        1,
+                        product.getName(), // Mặc định số lượng = 1, có thể cập nhật sau
+                        product.getUrl_img()
+                );
+                sharedViewModel.addProductToOrder(productData);
+                Toast.makeText(mContext,"Thêm vào giỏ hành thành công",Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        if (listProduct != null) {
-            return listProduct.size();
-        }
-        return 0;
+        return (listProduct != null) ? listProduct.size() : 0;
     }
 
-    public class CustomerViewHolder extends RecyclerView.ViewHolder {
+    public static class CustomerViewHolder extends RecyclerView.ViewHolder {
         ImageView imgProduct, btn_add;
         TextView tv_name_product, tv_price_product;
 
         public CustomerViewHolder(@NonNull View itemView) {
             super(itemView);
-
             imgProduct = itemView.findViewById(R.id.img_product);
             tv_name_product = itemView.findViewById(R.id.tv_name_product);
             tv_price_product = itemView.findViewById(R.id.tv_price_product);
@@ -101,4 +94,18 @@ public class ListViewProductAdapter extends RecyclerView.Adapter<ListViewProduct
         }
     }
 
+    public void setUpUI(Product product, CustomerViewHolder holder) {
+        String urlImg = product.getUrl_img();
+
+        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+        String formattedPrice = currencyFormat.format(product.getPrice());
+
+        if (urlImg != null) {
+            holder.imgProduct.setImageURI(Uri.parse(urlImg));
+        } else {
+            holder.imgProduct.setImageResource(R.drawable.anh1);
+        }
+        holder.tv_name_product.setText(product.getName());
+        holder.tv_price_product.setText("Giá : " + formattedPrice );
+    }
 }

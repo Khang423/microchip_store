@@ -20,8 +20,8 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rcv_order_detail"
-        android:layout_width="392dp"
-        android:layout_height="371dp"
+        android:layout_width="391dp"
+        android:layout_height="329dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="100dp"
         android:layout_marginEnd="10dp" />
@@ -34,7 +34,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginStart="132dp"
-        android:layout_marginBottom="91dp"
+        android:layout_marginBottom="40dp"
         android:text="Tổng tiền : "
         android:textColor="@color/Black"
         android:textSize="20dp"
@@ -48,7 +48,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginStart="25dp"
-        android:layout_marginBottom="91dp"
+        android:layout_marginBottom="40dp"
         android:text="Tổng tiền : "
         android:textColor="@color/Black"
         android:textSize="20dp"
@@ -61,7 +61,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginStart="270dp"
-        android:layout_marginBottom="91dp"
+        android:layout_marginBottom="40dp"
         android:text="VNĐ"
         android:textColor="@color/Black"
         android:textSize="20dp"
@@ -138,5 +138,30 @@
             android:layout_height="55dp" />
 
     </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayoutCreated_at"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_below="@+id/rcv_order_detail"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="265dp"
+        android:layout_marginEnd="25dp"
+        android:hint="Ngày đặt"
+        app:helperTextTextColor="@color/Red"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:startIconDrawable="@drawable/ic_date">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/input_created_at"
+            android:layout_width="match_parent"
+            android:layout_height="55dp" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
 
 </RelativeLayout>

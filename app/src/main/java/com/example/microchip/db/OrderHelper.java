@@ -36,23 +36,23 @@ public class OrderHelper extends SQLiteOpenHelper {
 
     }
 
-    public void addOrder(int customer_Id, double total, int status, String created_at, String address) {
+    public void addOrder(int customer_Id,String address,String created_at) {
         db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("customer_id", customer_Id);
-        values.put("total", total);
-        values.put("status", status);
-        values.put("created_at", created_at);
+        values.put("total", 0.0);
+        values.put("status", 1);
+        values.put("created_at",created_at );
         values.put("address", address);
 
         long rs = db.insert("[order]", null, values);
         db.close();
-
-        if (rs == -1) {
-            Toast.makeText(context, "Tạo giỏ hàng không thành công", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(context, "Tạo giỏ hàng thành công", Toast.LENGTH_SHORT).show();
-        }
+//
+//        if (rs == -1) {
+////            Toast.makeText(context, "Tạo giỏ hàng không thành công", Toast.LENGTH_SHORT).show();
+//        } else {
+//            Toast.makeText(context, "Tạo giỏ hàng thành công", Toast.LENGTH_SHORT).show();
+//        }
     }
 
     public void deleteOrder(int order_id) {

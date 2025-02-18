@@ -39,7 +39,7 @@ public class ViewOrderDetailActivity extends AppCompatActivity {
     private ImageView btn_add;
     TextView title, tv_total;
     TextInputLayout textInputLayoutAddress, textInputLayoutCustomerName;
-    TextInputEditText input_address, input_customer_name, input_note;
+    TextInputEditText input_address, input_customer_name, input_note,input_created_at;
 
     Button btn_order;
     int order_id;
@@ -57,6 +57,7 @@ public class ViewOrderDetailActivity extends AppCompatActivity {
         String name = GlobalSession.getSession().getName();
         orderDetailHelper = new OrderDetailHelper(this);
         double total_price = orderDetailHelper.totalPrice(order_id);
+        String created_at = orderDetailHelper.getCreatedAt(order_id);
 
         title.setText("CHI TIẾT HOÁ ĐƠN HĐ" + order_id);
         tv_total.setText(String.valueOf(total_price));
@@ -65,6 +66,7 @@ public class ViewOrderDetailActivity extends AppCompatActivity {
         input_address.setEnabled(false);
         input_customer_name.setEnabled(false);
         input_note.setEnabled(false);
+        input_created_at.setText(created_at);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
         rcvOrderDetail.setLayoutManager(linearLayoutManager);
@@ -106,6 +108,7 @@ public class ViewOrderDetailActivity extends AppCompatActivity {
         input_customer_name = findViewById(R.id.input_customer_name);
         textInputLayoutCustomerName = findViewById(R.id.textInputLayoutCustomerName);
         input_note = findViewById(R.id.input_note);
+        input_created_at = findViewById(R.id.input_created_at);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

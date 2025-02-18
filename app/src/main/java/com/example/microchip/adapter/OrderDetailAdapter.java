@@ -1,39 +1,42 @@
 package com.example.microchip.adapter;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.microchip.R;
 import com.example.microchip.db.OrderDetailHelper;
-import com.example.microchip.db.OrderHelper;
-import com.example.microchip.model.Order;
 import com.example.microchip.model.OrderDetail;
 import com.example.microchip.model.Product;
 
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.OrderDetailViewHolder> {
 
     private OrderDetailHelper dbHelper;
     private Context mContext;
     private List<OrderDetail> mListOrderDetail;
-
+    private OnQuantityChangeListener listener;
     public OrderDetailAdapter(Context mContext) {
         this.mContext = mContext;
     }
 
+    public interface OnQuantityChangeListener {
+        void onQuantityChanged();
+    }
+    public void setOnQuantityChangeListener(OnQuantityChangeListener listener) {
+        this.listener = listener;
+    }
     public void setData(List<OrderDetail> list) {
         this.mListOrderDetail = list;
         notifyDataSetChanged();
@@ -42,7 +45,7 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
     @NonNull
     @Override
     public OrderDetailViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_order_detail, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_fragment_order_detail, parent, false);
         return new OrderDetailViewHolder(view);
     }
 
@@ -54,34 +57,38 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
         dbHelper = new OrderDetailHelper(mContext);
         Product product = dbHelper.getInfo(item.getProduct_id());
 
-        holder.imgOrderDetail.setImageURI(Uri.parse(product.getUrl_img())); // Hình ảnh mặc định nếu không có
+        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+        String formattedPrice = currencyFormat.format(product.getPrice());
+
+
+        holder.imgOrderDetail.setImageURI(Uri.parse(product.getUrl_img()));
         holder.tv_order.setText(product.getName());
-        holder.tv_price.setText(String.valueOf(product.getPrice()));
+        holder.tv_price.setText("Giá : "+ formattedPrice);
         holder.tv_quantity.setText(String.valueOf(item.getQuantity()));
-        holder.ic_up.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dbHelper.quantityUp(item.getOrder_id(),product.getId());
-                item.setQuantity(item.getQuantity() + 1);
-                notifyItemChanged(position);
-                Intent resultIntent = new Intent();
-                ((Activity) mContext).setResult(-1, resultIntent);
+
+        holder.ic_up.setOnClickListener(view -> {
+            dbHelper.quantityUp(item.getOrder_id(), product.getId());
+            item.setQuantity(item.getQuantity() + 1);
+            notifyItemChanged(position);
+
+            if (listener != null) {
+                listener.onQuantityChanged();  // Gọi callback để cập nhật tổng tiền
             }
         });
-        holder.ic_down.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dbHelper.quantityDown(item.getOrder_id(),product.getId());
-                if (item.getQuantity() > 1) {
-                    item.setQuantity(item.getQuantity() - 1);
-                    notifyItemChanged(position);
-                } else {
-                    mListOrderDetail.remove(position);
-                    notifyItemRemoved(position);
-                    notifyItemRangeChanged(position, mListOrderDetail.size());
-                }
-                Intent resultIntent = new Intent();
-                ((Activity) mContext).setResult(-1, resultIntent);
+
+        holder.ic_down.setOnClickListener(view -> {
+            dbHelper.quantityDown(item.getOrder_id(), product.getId());
+            if (item.getQuantity() > 1) {
+                item.setQuantity(item.getQuantity() - 1);
+                notifyItemChanged(position);
+            } else {
+                mListOrderDetail.remove(position);
+                notifyItemRemoved(position);
+                notifyItemRangeChanged(position, mListOrderDetail.size());
+            }
+
+            if (listener != null) {
+                listener.onQuantityChanged();
             }
         });
     }

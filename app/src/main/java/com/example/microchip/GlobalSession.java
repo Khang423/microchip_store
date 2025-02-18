@@ -16,7 +16,6 @@ public class GlobalSession extends Application {
     private String address;
 
 
-
     public static GlobalSession getSession() {
         return session;
     }
@@ -35,6 +34,17 @@ public class GlobalSession extends Application {
         this.birthday = birthday;
         this.password = password;
         this.address = address;
+    }
+
+    public void clearSession() {
+        id = 0;
+        name = null;
+        email = null;
+        tel = null;
+        url_avatar = null;
+        gender = 0;
+        birthday = null;
+        address = null;
     }
 
     @Override

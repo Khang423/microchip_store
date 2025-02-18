@@ -2,10 +2,10 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_marginTop="10dp"
-    android:layout_marginStart="10dp"
-    android:layout_marginEnd="10dp"
-    app:cardCornerRadius="10dp"
+    android:layout_marginBottom="5dp"
+    android:layout_marginEnd="5dp"
+    android:layout_marginStart="5dp"
+    app:cardCornerRadius="5dp"
     android:layout_height="wrap_content">
 
     <RelativeLayout
@@ -19,7 +19,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:layout_marginStart="10dp"
-            android:src="@drawable/anh1">
+            android:src="@drawable/ic_micochip">
         </de.hdodenhof.circleimageview.CircleImageView>
 
         <TextView
@@ -36,23 +36,25 @@
 
         <ImageView
             android:id="@+id/btn_delete"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
             android:layout_marginTop="20dp"
             android:layout_marginEnd="10dp"
-            android:src="@drawable/ic_trash"/>
+            android:src="@drawable/trash"/>
 
         <ImageView
             android:id="@+id/btn_edit"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
             android:layout_marginTop="20dp"
             android:layout_marginEnd="60dp"
-            android:src="@drawable/ic_edit"/>
+            android:src="@drawable/edit"/>
 
 
     </RelativeLayout>

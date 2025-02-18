@@ -16,6 +16,7 @@ import com.example.microchip.db.AuthHelper;
 import com.example.microchip.db.CustomerHelper;
 import com.example.microchip.db.DatabaseHelper;
 import com.example.microchip.R;
+import com.example.microchip.fragment.MainActivity;
 import com.example.microchip.model.Customer;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -72,7 +73,7 @@ public class LoginActivity extends AppCompatActivity {
                                     customer.getAddress()
                             );
                         }
-                        Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(intent);
                     } else {
                         err_message.setText("Tên đăng nhập hoặc mật khẩu không chính xác!");

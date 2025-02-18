@@ -61,7 +61,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.Customer
             holder.imgProduct.setImageResource(R.drawable.anh1); // Hình ảnh mặc định nếu không có
         }
         holder.tv_name_product.setText(product.getName());
-        holder.tv_price_product.setText(String.valueOf(product.getPrice()));
+        holder.tv_price_product.setText("Giá tiền : "+product.getPrice());
 
         holder.btn_edit.setOnClickListener(new View.OnClickListener() {
             @Override

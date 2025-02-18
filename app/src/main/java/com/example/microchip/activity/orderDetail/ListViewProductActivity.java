@@ -35,7 +35,7 @@ public class ListViewProductActivity extends AppCompatActivity {
         setContentView(R.layout.activity_list_view_product);
         init();
         order_id= getIntent().getIntExtra("order_id",-1);
-        lvproductAdapter = new ListViewProductAdapter(this);
+//        lvproductAdapter = new ListViewProductAdapter(g,this);
         LinearLayoutManager linearLayoutManager =  new LinearLayoutManager(this,RecyclerView.VERTICAL,false);
         rcvProduct.setLayoutManager(linearLayoutManager);
 

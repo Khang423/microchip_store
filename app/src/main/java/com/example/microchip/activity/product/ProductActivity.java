@@ -1,6 +1,7 @@
 package com.example.microchip.activity.product;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -8,24 +9,24 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.example.microchip.R;
 import com.example.microchip.adapter.ProductAdapter;
 import com.example.microchip.model.Product;
+import com.google.android.material.appbar.MaterialToolbar;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ProductActivity extends AppCompatActivity {
-
-    ImageView btnAdd;
-
-    SQLiteDatabase db;
+        SQLiteDatabase db;
 
     RecyclerView rcvProduct;
     ProductAdapter productAdapter;
+    MaterialToolbar materialToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,31 +35,35 @@ public class ProductActivity extends AppCompatActivity {
         init();
 
         productAdapter = new ProductAdapter(this);
-        LinearLayoutManager linearLayoutManager =  new LinearLayoutManager(this,RecyclerView.VERTICAL,false);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
         rcvProduct.setLayoutManager(linearLayoutManager);
 
         productAdapter.setData(getListProduct());
         rcvProduct.setAdapter(productAdapter);
-        btnAdd.setOnClickListener(new View.OnClickListener() {
+
+        materialToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(ProductActivity.this, AddProductActivity.class);
-                startActivityForResult(intent, 100);
+            public boolean onMenuItemClick(MenuItem item) {
+                if (item.getItemId() == R.id.add_product) {
+                    Intent intent = new Intent(ProductActivity.this, AddProductActivity.class);
+                    startActivityForResult(intent, 100);
+                }
+                return false;
             }
         });
     }
 
     public void init() {
-        btnAdd = findViewById(R.id.btn_add);
         rcvProduct = findViewById(R.id.rcv_product);
+        materialToolbar = findViewById(R.id.toolbar);
     }
 
-    private List<Product> getListProduct(){
+    private List<Product> getListProduct() {
         List<Product> list = new ArrayList<>();
-        db = openOrCreateDatabase("microchip.db",MODE_PRIVATE,null);
-        Cursor cursor = db.rawQuery("select * from product", null);
+        db = openOrCreateDatabase("microchip.db", MODE_PRIVATE, null);
+        Cursor cursor = db.rawQuery("select * from product where status=0", null);
 
-        if(cursor.moveToFirst()){
+        if (cursor.moveToFirst()) {
             do {
                 Product product = new Product(
                         cursor.getInt(0),//id
@@ -78,7 +83,7 @@ public class ProductActivity extends AppCompatActivity {
                         cursor.getDouble(14)
                 );
                 list.add(product);
-            }while(cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
         cursor.close();
         return list;

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.Toast;
 
 public class ProductHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "microchip.db";
@@ -48,6 +49,7 @@ public class ProductHelper extends SQLiteOpenHelper {
         values.put("product_type_id", product_type_id);
         values.put("brand", brand);
         values.put("price", price);
+        values.put("status", 0);
 
         long result = db.insert("product", null, values);
         db.close();
@@ -81,6 +83,7 @@ public class ProductHelper extends SQLiteOpenHelper {
         values.put("product_type_id", product_type_id);
         values.put("brand", brand);
         values.put("price", price);
+        values.put("status", 0);
 
         int rowsAffected = db.update("product", values, "id = ?", new String[]{String.valueOf(id)});
         db.close();
@@ -94,7 +97,10 @@ public class ProductHelper extends SQLiteOpenHelper {
 
     public void deleteProduct(int product_id) {
         db = this.getWritableDatabase();
-        db.delete("product", "id = ?", new String[]{String.valueOf(product_id)});
+        ContentValues values = new ContentValues();
+        values.put("status",1);
+        db.update("product", values,"id = ?", new String[]{String.valueOf(product_id)});
+        Toast.makeText(context,"Xoá sản phẩm thành công",Toast.LENGTH_LONG).show();
         db.close();
     }
 }

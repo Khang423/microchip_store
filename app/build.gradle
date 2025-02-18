@@ -26,6 +26,9 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 dependencies {
@@ -42,4 +45,7 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:3.1.0'
     // chart
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+    // crypt
+    implementation 'at.favre.lib:bcrypt:0.10.2'
+    implementation 'androidx.biometric:biometric:1.2.0'
 }

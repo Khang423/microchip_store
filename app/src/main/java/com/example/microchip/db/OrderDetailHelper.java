@@ -7,7 +7,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.widget.Toast;
 
+import com.example.microchip.GlobalSession;
+import com.example.microchip.model.OrderDetail;
 import com.example.microchip.model.Product;
+import com.example.microchip.model.ProductData;
 
 public class OrderDetailHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "microchip.db";
@@ -31,29 +34,58 @@ public class OrderDetailHelper extends SQLiteOpenHelper {
 
     }
 
-    public void add(int order_id, int product_id, double price, int quantity) {
+    public void add(OrderDetail productData) {
         db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery("SELECT quantity FROM [order_detail] WHERE order_id = ? AND product_id = ?",
-                new String[]{String.valueOf(order_id), String.valueOf(product_id)});
+        int customer_id = GlobalSession.getSession().getId();
+        int order_id = 0;
 
-        if (cursor.moveToFirst()) {
-            int currentQuantity = cursor.getInt(0);
-            ContentValues values = new ContentValues();
-            values.put("quantity", currentQuantity + 1);
-            db.update("[order_detail]", values, "order_id = ? AND product_id = ?",
-                    new String[]{String.valueOf(order_id), String.valueOf(product_id)});
-        } else {
-            ContentValues values = new ContentValues();
-            values.put("order_id", order_id);
-            values.put("product_id", product_id);
-            values.put("price", price);
-            values.put("quantity", quantity);
-            db.insert("[order_detail]", null, values);
+        // Lấy ID đơn hàng lớn nhất
+        Cursor cursor = db.rawQuery("SELECT MAX(id) FROM [order]", null);
+        if (cursor != null && cursor.moveToFirst()) {
+            order_id = cursor.getInt(0);
         }
-        cursor.close();
-        db.close();
+        if (cursor != null) {
+            cursor.close();
+        }
 
-        Toast.makeText(context, "Thêm sản phẩm vào giỏ hàng thành công", Toast.LENGTH_SHORT).show();
+        // Nếu chưa có đơn hàng nào, tạo mới
+        if (order_id == 0) {
+            ContentValues new_order = new ContentValues();
+            new_order.put("customer_id", customer_id);
+            new_order.put("total", 0); // Lúc đầu total là 0
+            new_order.put("status", 1);
+            order_id = (int) db.insert("[order]", null, new_order);
+        }
+
+        // Thêm sản phẩm vào chi tiết đơn hàng
+        ContentValues values = new ContentValues();
+        values.put("order_id", order_id);
+        values.put("product_id", productData.getId());
+        values.put("price", productData.getPrice());
+        values.put("quantity", productData.getQuantity());
+        db.insert("[order_detail]", null, values);
+
+        // Cập nhật tổng tiền đơn hàng
+        db.execSQL("UPDATE [order] SET total = (SELECT SUM(price * quantity) FROM [order_detail] WHERE order_id = ?),status =2  WHERE id = ?",
+                new Object[]{order_id, order_id});
+    }
+
+
+    public int getOrderId() {
+        int order_id = 0;
+        db = this.getWritableDatabase();
+        int customer_id = GlobalSession.getSession().getId();
+        Cursor cursor = db.rawQuery("SELECT MAX(id) FROM [order] WHERE status = 1 and customer_id = ?", new String[]{String.valueOf(customer_id)});
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                order_id = cursor.getInt(0);
+            }
+            cursor.close(); // Đóng con trỏ sau khi sử dụng
+        }
+
+        db.close(); // Đóng database sau khi sử dụng
+        return order_id;
     }
 
 
@@ -88,13 +120,29 @@ public class OrderDetailHelper extends SQLiteOpenHelper {
         return product;
     }
 
-    public double totalPrice(int id){
+    public double totalPrice(int id) {
         db = this.getWritableDatabase();
         double rs = 0.0;
 
         Cursor cursor = db.rawQuery("SELECT SUM(price * quantity) FROM [order_detail] WHERE [order_id] = ?", new String[]{String.valueOf(id)});
         if (cursor.moveToFirst()) {
             rs = cursor.getDouble(0);
+        }
+        if (cursor != null) {
+            cursor.close();
+        }
+        db.close();
+
+        return rs;
+    }
+
+    public String getCreatedAt(int id) {
+        db = this.getWritableDatabase();
+        String rs = null;
+
+        Cursor cursor = db.rawQuery("SELECT created_at FROM [order] WHERE [id] = ?", new String[]{String.valueOf(id)});
+        if (cursor.moveToFirst()) {
+            rs = cursor.getString(0);
         }
         if (cursor != null) {
             cursor.close();

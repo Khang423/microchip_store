@@ -4,6 +4,11 @@
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+
+    <uses-feature
+        android:name="android.hardware.fingerprint"
+        android:required="true" />
 
     <application
         android:name=".GlobalSession"
@@ -17,10 +22,16 @@
         android:theme="@style/Theme.Microchip"
         tools:targetApi="31">
         <activity
-            android:name=".activity.StatisticAcitivity"
+            android:name=".activity.auth.TestActivity"
             android:exported="false" />
         <activity
             android:name=".activity.DashboardActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.StatisticAcitivity"
+            android:exported="false" />
+        <activity
+            android:name=".fragment.MainActivity"
             android:exported="false" />
         <activity
             android:name=".activity.productType.ProductTypeActivity"

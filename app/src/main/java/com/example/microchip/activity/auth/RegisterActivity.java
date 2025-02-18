@@ -17,6 +17,8 @@ import com.example.microchip.R;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
+
 public class RegisterActivity extends AppCompatActivity {
     TextView btn_login;
     TextInputEditText input_mail, input_name, input_password, input_re_password;
@@ -65,7 +67,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                 if (isValid) {
                     if (checkEmailExists(email)) {
-                        Toast.makeText(RegisterActivity.this, "Email đã tồn tại", Toast.LENGTH_SHORT).show();
+                        textInputLayoutMail.setError("Mail đã tồn tại");
                     } else {
                         addCustomer(name, email, password);
                         Toast.makeText(RegisterActivity.this, "Đăng ký tài khoản thành công", Toast.LENGTH_SHORT).show();
@@ -90,10 +92,11 @@ public class RegisterActivity extends AppCompatActivity {
 
     public void addCustomer(String name, String mail, String password) {
         try {
+            String hashPassword = BCrypt.withDefaults().hashToString(12,password.toCharArray());
             db = openOrCreateDatabase("microchip.db", Context.MODE_PRIVATE, null);
 
             db.execSQL("INSERT INTO customer( name, email, tel, avatar, gender, birthday, password, address) " +
-                    "VALUES(?, ?, ?, ?, ?, ?, ?, ?)", new String[]{name, mail, "", "", "", "", password, ""});
+                    "VALUES(?, ?, ?, ?, ?, ?, ?, ?)", new String[]{name, mail, "", "", "", "", hashPassword, ""});
             setResult(RESULT_OK);
         } catch (SQLException e) {
             e.printStackTrace(); // In lỗi ra log để dễ dàng debug

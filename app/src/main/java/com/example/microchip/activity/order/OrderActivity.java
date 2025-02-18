@@ -64,7 +64,7 @@ public class OrderActivity extends AppCompatActivity {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z");
                 String formattedTime = now.format(formatter);
                 OrderHelper orderHelper = new OrderHelper(OrderActivity.this);
-                orderHelper.addOrder(customer_id,total,status,formattedTime,address);
+//                orderHelper.addOrder(customer_id,total,status,formattedTime,address);
                 orderAdapter.setData(getListOrder());
                 orderAdapter.notifyDataSetChanged();
             }
