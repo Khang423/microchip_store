@@ -151,6 +151,22 @@ public class OrderDetailHelper extends SQLiteOpenHelper {
 
         return rs;
     }
+    public String getAddress(int id) {
+        db = this.getWritableDatabase();
+        String rs = null;
+
+        Cursor cursor = db.rawQuery("SELECT address FROM [order] WHERE [id] = ?", new String[]{String.valueOf(id)});
+        if (cursor.moveToFirst()) {
+            rs = cursor.getString(0);
+        }
+        if (cursor != null) {
+            cursor.close();
+        }
+        db.close();
+
+        return rs;
+    }
+
 
     public void quantityUp(int order_id, int product_id) {
         db = this.getWritableDatabase();

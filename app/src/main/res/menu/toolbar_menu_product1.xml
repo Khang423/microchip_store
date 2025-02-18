@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/add_product"
+        android:title="Thêm sản phẩm"
+        android:icon="@drawable/cpu"
+        /><item
+        android:id="@+id/product_type"
+        android:title="Loại sản phẩm"
+        android:icon="@drawable/cpu"
+        />
+</menu>
+    <!--        app:showAsAction="ifRoom"-->

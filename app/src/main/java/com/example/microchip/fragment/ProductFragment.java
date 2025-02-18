@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.microchip.R;
 import com.example.microchip.activity.product.AddProductActivity;
 import com.example.microchip.activity.product.ProductActivity;
+import com.example.microchip.activity.productType.ProductTypeActivity;
 import com.example.microchip.adapter.ListViewProductAdapter;
 import com.example.microchip.model.Product;
 import com.google.android.material.appbar.MaterialToolbar;
@@ -62,6 +63,9 @@ public class ProductFragment extends Fragment {
             public boolean onMenuItemClick(MenuItem item) {
                 if (item.getItemId() == R.id.add_product) {
                     Intent intent = new Intent(getActivity(), ProductActivity.class);
+                    startActivity(intent);
+                } else if (item.getItemId() == R.id.product_type) {
+                    Intent intent = new Intent(getActivity(), ProductTypeActivity.class);
                     startActivity(intent);
                 }
                 return false;

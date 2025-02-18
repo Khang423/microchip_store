@@ -22,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.example.microchip.GlobalSession;
 import com.example.microchip.R;
 import com.example.microchip.activity.product.EditProductActivity;
 import com.example.microchip.db.CustomerHelper;
@@ -92,14 +93,12 @@ public class EditCustomerActivity extends AppCompatActivity {
         input_name = findViewById(R.id.input_name);
         input_tel = findViewById(R.id.input_tel);
         input_mail = findViewById(R.id.input_mail);
-        input_password = findViewById(R.id.input_password);
         input_address = findViewById(R.id.input_address);
         input_birthday = findViewById(R.id.input_birthday);
         input_gender = findViewById(R.id.input_gender);
         textInputLayoutAddress = findViewById(R.id.textInputLayoutAddress);
         textInputLayoutBirthday = findViewById(R.id.textInputLayoutBirthday);
         textInputLayoutGender = findViewById(R.id.textInputLayoutGender);
-        textInputLayoutPassword = findViewById(R.id.textInputLayoutPassword);
         textInputLayoutMail = findViewById(R.id.textInputLayoutMail);
         textInputLayoutTel = findViewById(R.id.textInputLayoutTel);
         textInputLayoutName = findViewById(R.id.textInputLayoutName);
@@ -169,15 +168,14 @@ public class EditCustomerActivity extends AppCompatActivity {
 
 
     public void update() {
-        int id = getIntent().getIntExtra("id", -1);
-        String oldUriImg = getIntent().getStringExtra("avatar");
+        int id = GlobalSession.getSession().getId();
+        String oldUriImg = GlobalSession.getSession().getUrl_avatar();
 
         Uri newImageUri = selectedImageUri;
 
         String name = input_name.getText().toString().trim();
         String tel = input_tel.getText().toString().trim();
         String email = input_mail.getText().toString().trim();
-        String password = input_password.getText().toString().trim();
         String address = input_address.getText().toString().trim();
         String birthday = input_birthday.getText().toString().trim();
 
@@ -201,15 +199,12 @@ public class EditCustomerActivity extends AppCompatActivity {
 
         CustomerHelper dbHelper = new CustomerHelper(this);
         try {
-            if (checkEmailExists(email,id)) {
-                Toast.makeText(EditCustomerActivity.this, "Email đã tồn tại", Toast.LENGTH_SHORT).show();
-            } else {
-                dbHelper.update(id, name, email, tel, imgPath, gender, birthday, password, address);
-                Toast.makeText(this, "Cập nhật thành công!", Toast.LENGTH_SHORT).show();
-                Intent resultIntent = new Intent();
-                setResult(EditCustomerActivity.RESULT_OK, resultIntent);
-                finish();
-            }
+            dbHelper.update(id, name, email, tel, imgPath, gender, birthday, address);
+            GlobalSession.getSession().clearSession();
+            GlobalSession.getSession().setUserData(id, name, email, tel, imgPath, gender, birthday, null, address);
+            Intent intent = new Intent();
+            setResult(RESULT_OK, intent);
+            finish();
         } catch (SQLException e) {
             Toast.makeText(this, "Lỗi khi cập nhật sản phẩm: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
@@ -217,21 +212,19 @@ public class EditCustomerActivity extends AppCompatActivity {
 
 
     public void setDataInput() {
-        int id = getIntent().getIntExtra("id", -1);
-        String name = getIntent().getStringExtra("name");
-        String email = getIntent().getStringExtra("email");
-        String tel = getIntent().getStringExtra("tel");
-        String avatar = getIntent().getStringExtra("avatar");
-        int gender = getIntent().getIntExtra("gender", -1);
-        String birthday = getIntent().getStringExtra("birthday");
-        String password = getIntent().getStringExtra("password");
-        String address = getIntent().getStringExtra("address");
+        int id = GlobalSession.getSession().getId();
+        String name = GlobalSession.getSession().getName();
+        String email = GlobalSession.getSession().getEmail();
+        String tel = GlobalSession.getSession().getTel();
+        String avatar = GlobalSession.getSession().getUrl_avatar();
+        int gender = GlobalSession.getSession().getGender();
+        String birthday = GlobalSession.getSession().getBirthday();
+        String address = GlobalSession.getSession().getAddress();
 
         imageReview.setImageURI(Uri.parse(avatar));
         input_name.setText(name);
         input_tel.setText(tel);
         input_mail.setText(email);
-        input_password.setText(password);
         input_address.setText(address);
         input_birthday.setText(birthday);
         input_gender.setText(String.valueOf(gender));
@@ -250,10 +243,10 @@ public class EditCustomerActivity extends AppCompatActivity {
         datePickerDialog.show();
     }
 
-    public boolean checkEmailExists(String email,int id) {
+    public boolean checkEmailExists(String email, int id) {
         Boolean rs = false;
         db = openOrCreateDatabase("microchip.db", Context.MODE_PRIVATE, null);
-        Cursor c = db.rawQuery("Select * From customer where email = ? and id != ?", new String[]{email,String.valueOf(id)});
+        Cursor c = db.rawQuery("Select * From customer where email = ? and id != ?", new String[]{email, String.valueOf(id)});
         rs = c.getCount() > 0;
         c.close();
         db.close();

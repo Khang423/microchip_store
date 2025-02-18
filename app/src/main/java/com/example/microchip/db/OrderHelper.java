@@ -47,12 +47,6 @@ public class OrderHelper extends SQLiteOpenHelper {
 
         long rs = db.insert("[order]", null, values);
         db.close();
-//
-//        if (rs == -1) {
-////            Toast.makeText(context, "Tạo giỏ hàng không thành công", Toast.LENGTH_SHORT).show();
-//        } else {
-//            Toast.makeText(context, "Tạo giỏ hàng thành công", Toast.LENGTH_SHORT).show();
-//        }
     }
 
     public void deleteOrder(int order_id) {
@@ -60,6 +54,7 @@ public class OrderHelper extends SQLiteOpenHelper {
         db.delete("[order]", "id = ?", new String[]{String.valueOf(order_id)});
         db.delete("[order_detail]", "[order_id] = ?", new String[]{String.valueOf(order_id)});
         db.close();
+        Toast.makeText(context, "Xoá đơn hàng thành công", Toast.LENGTH_SHORT).show();
     }
 
     public void order(int order_id, double total, String created_at, String address) {
@@ -150,5 +145,23 @@ public class OrderHelper extends SQLiteOpenHelper {
         db.close();
         Log.d("date :", "" + dates);
         return dates;
+    }
+
+    public void updateStatus(int order_id){
+        db =this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("status",1);
+        db.update("[order]",values,"id = ?",new String[]{String.valueOf(order_id)});
+        db.close();
+    }
+
+    public void updateOrder(int order_id,String Address, double price){
+        db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("address",Address);
+        values.put("total",price);
+        db.update("[order]",values,"id = ?",new String[]{String.valueOf(order_id)});
+        db.close();
+        Toast.makeText(context, "Cập nhật đơn hàng thành công", Toast.LENGTH_SHORT).show();
     }
 }

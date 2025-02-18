@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.microchip.GlobalSession;
 import com.example.microchip.R;
 import com.example.microchip.adapter.HasOrderedAdapter;
+import com.example.microchip.adapter.OrderDetailAdapter;
 import com.example.microchip.model.Order;
 
 import java.util.ArrayList;
@@ -38,6 +39,12 @@ public class InvoiceFragment extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
         rcvOrder.setLayoutManager(linearLayoutManager);
 
+        hasOrderedAdapter.LoadDataLister(new HasOrderedAdapter.LoadDataLister() {
+            @Override
+            public void loadData() {
+                onResume();
+            }
+        });
         hasOrderedAdapter.setData(getListOrder());
         rcvOrder.setAdapter(hasOrderedAdapter);
 
@@ -48,7 +55,7 @@ public class InvoiceFragment extends Fragment {
         List<Order> list = new ArrayList<>();
         db = requireContext().openOrCreateDatabase("microchip.db", getContext().MODE_PRIVATE, null);
         int customer_id = GlobalSession.getSession().getId();
-        Cursor cursor = db.rawQuery("SELECT * FROM [order] WHERE customer_id = ? AND status = 2", new String[]{String.valueOf(customer_id)});
+        Cursor cursor = db.rawQuery("SELECT * FROM [order] WHERE customer_id = ? ", new String[]{String.valueOf(customer_id)});
 
         if (cursor.moveToFirst()) {
             do {

@@ -1,5 +1,6 @@
 package com.example.microchip.fragment;
 
+import android.content.Intent;
 import android.icu.text.NumberFormat;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,6 +28,8 @@ import com.example.microchip.model.OrderDetail;
 import com.example.microchip.model.ProductData;
 import com.example.microchip.model.SharedViewModel;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -42,10 +45,9 @@ public class CartFragment extends Fragment {
     private RecyclerView rcvOrder;
     private OrderDetailAdapter orderDetailAdapter;
     private SharedViewModel sharedViewModel;
-    private MaterialToolbar toolbarCart;
     TextView tv_total;
     Button btn_order;
-
+    TextInputEditText input_customer_name,input_address;
     List<OrderDetail> orderDetailList = new ArrayList<>();
 
     @Nullable
@@ -55,15 +57,21 @@ public class CartFragment extends Fragment {
         init(view);
 
         sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
-
-        // Thiết lập Adapter cho RecyclerView
         orderDetailAdapter = new OrderDetailAdapter(getContext());
+
         orderDetailAdapter.setOnQuantityChangeListener(new OrderDetailAdapter.OnQuantityChangeListener() {
             @Override
             public void onQuantityChanged() {
                 updateTotalPrice();
             }
         });
+
+        String customer_name = GlobalSession.getSession().getName();
+        String address = GlobalSession.getSession().getAddress();
+
+        input_customer_name.setText(customer_name);
+        input_address.setText(address);
+
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
         rcvOrder.setLayoutManager(linearLayoutManager);
         rcvOrder.setAdapter(orderDetailAdapter);
@@ -105,16 +113,21 @@ public class CartFragment extends Fragment {
             }
         });
 
-        btn_order.setOnClickListener(view1->saveOrderToDatabase());
+        btn_order.setOnClickListener(view1 -> {
+
+            saveOrderToDatabase();
+        });
 
         return view;
     }
 
     public void init(View view) {
         rcvOrder = view.findViewById(R.id.rcv_order);
-        toolbarCart = view.findViewById(R.id.toolbar);
         tv_total = view.findViewById(R.id.tv_total);
         btn_order = view.findViewById(R.id.btn_order);
+        input_address = view.findViewById(R.id.input_address);
+        input_customer_name = view.findViewById(R.id.input_customer_name);
+
     }
 
     private void updateTotalPrice() {
@@ -125,20 +138,25 @@ public class CartFragment extends Fragment {
             totalPrice += item.getPrice() * item.getQuantity();
         }
         String formattedPrice = currencyFormat.format(totalPrice);
-        tv_total.setText("Tổng tiền: " + formattedPrice );
+        tv_total.setText("Tổng tiền: " + formattedPrice);
+    }
+
+    public void moveToOrderActivity() {
+        Intent intent = new Intent();
     }
 
     private void saveOrderToDatabase() {
         OrderDetailHelper orderDetailHelper = new OrderDetailHelper(getActivity());
         OrderHelper orderHelper = new OrderHelper(getActivity());
         int customer_id = GlobalSession.getSession().getId();
-        String address = GlobalSession.getSession().getAddress();
+        String address = input_address.getText().toString().trim();
+
         // thời gian
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String formattedTime = now.format(formatter);
 
-        orderHelper.addOrder(customer_id,address,formattedTime);
+        orderHelper.addOrder(customer_id, address, formattedTime);
         if (orderDetailList.isEmpty()) {
             Toast.makeText(getContext(), "Giỏ hàng trống!", Toast.LENGTH_SHORT).show();
             return;
@@ -148,7 +166,6 @@ public class CartFragment extends Fragment {
             orderDetailHelper.add(item);
         }
         Toast.makeText(getContext(), "Đặt hàng thành công", Toast.LENGTH_SHORT).show();
-
         // Xóa giỏ hàng sau khi lưu
         sharedViewModel.clearCart();
         orderDetailList.clear();

@@ -19,7 +19,9 @@ import com.example.microchip.db.OrderDetailHelper;
 import com.example.microchip.model.OrderDetail;
 import com.example.microchip.model.Product;
 
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class ViewOrderDetailAdapter extends RecyclerView.Adapter<ViewOrderDetailAdapter.OrderDetailViewHolder> {
 
@@ -51,10 +53,14 @@ public class ViewOrderDetailAdapter extends RecyclerView.Adapter<ViewOrderDetail
         dbHelper = new OrderDetailHelper(mContext);
         Product product = dbHelper.getInfo(item.getProduct_id());
 
-        holder.imgOrderDetail.setImageURI(Uri.parse(product.getUrl_img())); // Hình ảnh mặc định nếu không có
+        holder.imgOrderDetail.setImageURI(Uri.parse(product.getUrl_img()));
         holder.tv_order.setText(product.getName());
-        holder.tv_price.setText(String.valueOf(product.getPrice()));
+
         holder.tv_quantity.setText(String.valueOf(item.getQuantity()));
+        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+        String formattedPrice = currencyFormat.format(product.getPrice());
+
+        holder.tv_price.setText("Tổng tiền: " + formattedPrice);
     }
 
     @Override

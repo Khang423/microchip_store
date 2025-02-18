@@ -19,7 +19,7 @@
             android:layout_height="?attr/actionBarSize"
             app:titleTextColor="@color/White"
             app:titleCentered="true"
-            app:menu="@menu/toolbar_menu_product"
+            app:menu="@menu/toolbar_menu_product1"
             app:title="Trang chủ" />
 
     </com.google.android.material.appbar.AppBarLayout>

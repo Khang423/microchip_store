@@ -92,8 +92,6 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
             imgOrder = itemView.findViewById(R.id.img_order);
             tv_order = itemView.findViewById(R.id.tv_name_order);
             btn_delete = itemView.findViewById(R.id.btn_delete);
-
-
         }
     }
 }

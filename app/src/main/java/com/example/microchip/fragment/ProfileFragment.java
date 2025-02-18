@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -27,6 +28,10 @@ import androidx.fragment.app.Fragment;
 
 import com.example.microchip.GlobalSession;
 import com.example.microchip.R;
+import com.example.microchip.activity.DashboardActivity;
+import com.example.microchip.activity.auth.LoginActivity;
+import com.example.microchip.activity.customer.EditCustomerActivity;
+import com.example.microchip.db.AuthHelper;
 import com.example.microchip.db.CustomerHelper;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -45,115 +50,101 @@ public class ProfileFragment extends Fragment {
     private static final int PICK_IMAGE_REQUEST = 1;
     private static final int PERMISSION_REQUEST_CODE = 2;
 
-    private Button btnChangeImage, btnEdit;
-    private CircleImageView imageReview;
-    private TextInputEditText inputName, inputTel, inputMail, inputPassword, inputGender, inputBirthday, inputAddress;
-    private Uri selectedImageUri;
-    private SQLiteDatabase db;
+     Button btn_logout,btn_profile,btn_delete;
+    CircleImageView imageReview;
+     TextInputEditText inputName, inputTel, inputMail, inputPassword, inputGender, inputBirthday, inputAddress;
+    Uri selectedImageUri;
+     SQLiteDatabase db;
+    TextView tv_customer_mail,tv_customer_name;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
         init(view);
-        String img_url = GlobalSession.getSession().getUrl_avatar();
-        String name = GlobalSession.getSession().getName();
-        String email = GlobalSession.getSession().getEmail();
-        String tel = GlobalSession.getSession().getTel();
-        String pass = GlobalSession.getSession().getPassword();
-        int gender = GlobalSession.getSession().getGender();
-        String birthdate = GlobalSession.getSession().getBirthday();
-        String address = GlobalSession.getSession().getAddress();
-
-        imageReview.setImageURI(Uri.parse(img_url));
-        inputName.setText(name);
-        inputMail.setText(email);
-        inputTel.setText(tel);
-        inputBirthday.setText(birthdate);
-        if(gender == 1){
-            inputGender.setText("Nam");
-        }else {
-            inputGender.setText("Nữ");
-        }
-
-        inputPassword.setText(pass);
-        inputAddress.setText(address);
-
-        inputBirthday.setOnClickListener(v -> showDatePickerDialog());
-
-        btnChangeImage.setOnClickListener(v -> {
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
-            } else {
-                changeImage();
+        setUpData();
+        onResume();
+        btn_logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AuthHelper authHelper =  new AuthHelper(getActivity());
+                authHelper.logOut();
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
             }
         });
-
-        btnEdit.setOnClickListener(v -> update());
-
+        btn_profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent =  new Intent(getActivity(), EditCustomerActivity.class);
+                startActivityForResult(intent, 100);
+            }
+        });
+        btn_delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int customer_id = GlobalSession.getSession().getId();
+                CustomerHelper customerHelper =  new CustomerHelper(getActivity());
+                customerHelper.deleteCustomer(customer_id);
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+            }
+        });
         return view;
     }
 
-    private void init(View view) {
-        btnChangeImage = view.findViewById(R.id.btn_change_image);
-        imageReview = view.findViewById(R.id.imageReview);
-        btnEdit = view.findViewById(R.id.btn_edit);
-        inputName = view.findViewById(R.id.input_name);
-        inputTel = view.findViewById(R.id.input_tel);
-        inputMail = view.findViewById(R.id.input_mail);
-        inputPassword = view.findViewById(R.id.input_password);
-        inputAddress = view.findViewById(R.id.input_address);
-        inputBirthday = view.findViewById(R.id.input_birthday);
-        inputGender = view.findViewById(R.id.input_gender);
-    }
 
-    private void changeImage() {
-        Intent pickImageIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        pickImageIntent.setType("image/*");
-        startActivityForResult(pickImageIntent, PICK_IMAGE_REQUEST);
+    private void init(View view) {
+        imageReview = view.findViewById(R.id.imageReview);
+        inputName = view.findViewById(R.id.input_name);
+        inputMail = view.findViewById(R.id.input_mail);
+        tv_customer_mail = view.findViewById(R.id.tv_customer_mail);
+        tv_customer_name = view.findViewById(R.id.tv_customer_name);
+        btn_profile = view.findViewById(R.id.btn_profile);
+        btn_delete = view.findViewById(R.id.btn_delete);
+        btn_logout = view.findViewById(R.id.btn_logout);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == getActivity().RESULT_OK && data != null) {
-            selectedImageUri = data.getData();
-            imageReview.setImageURI(selectedImageUri);
+        if (requestCode == 100 && resultCode == 100) {
+            String newData = data.getStringExtra("data_key");
+            // Cập nhật dữ liệu mới
+            String img_url = GlobalSession.getSession().getUrl_avatar();
+            String name = GlobalSession.getSession().getName();
+            String email = GlobalSession.getSession().getEmail();
+
+            if(img_url != null) {
+                imageReview.setImageURI(Uri.parse(img_url));
+            }else{
+                imageReview.setImageResource(R.drawable.anh1);
+            }
+
+            tv_customer_mail.setText(email);
+            tv_customer_name.setText(name);
         }
     }
-
-    private void showDatePickerDialog() {
-        final Calendar calendar = Calendar.getInstance();
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-
-        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), (view, year1, month1, dayOfMonth) -> {
-            String selectedDate = String.format("%04d-%02d-%02d", year1, month1 + 1, dayOfMonth);
-            inputBirthday.setText(selectedDate);
-        }, year, month, day);
-        datePickerDialog.show();
+    @Override
+    public void onResume() {
+        super.onResume();
+        setUpData();  // Hàm load lại dữ liệu
     }
+    public void setUpData() {
+        String img_url = GlobalSession.getSession().getUrl_avatar();
+        String name = GlobalSession.getSession().getName();
+        String email = GlobalSession.getSession().getEmail();
 
-    public void update() {
-        int id = GlobalSession.getSession().getId();
-        String oldUriImg = GlobalSession.getSession().getUrl_avatar();
-        String name = inputName.getText().toString().trim();
-        String tel = inputTel.getText().toString().trim();
-        String email = inputMail.getText().toString().trim();
-        String password = inputPassword.getText().toString().trim();
-        String address = inputAddress.getText().toString().trim();
-        String birthday = inputBirthday.getText().toString().trim();
-        int gender = Integer.parseInt(inputGender.getText().toString().trim());
-        String imgPath = selectedImageUri != null ? selectedImageUri.toString() : oldUriImg;
-        String hashPassword = BCrypt.withDefaults().hashToString(12,password.toCharArray());
-
-        CustomerHelper dbHelper = new CustomerHelper(getContext());
-        try {
-            dbHelper.update(id, name, email, tel, imgPath, gender, birthday, hashPassword, address);
-            Toast.makeText(getContext(), "Cập nhật thành công!", Toast.LENGTH_SHORT).show();
-        } catch (SQLException e) {
-            Toast.makeText(getContext(), "Lỗi khi cập nhật thông tin: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        if(img_url != null) {
+            imageReview.setImageURI(Uri.parse(img_url));
+        }else{
+            imageReview.setImageResource(R.drawable.anh1);
         }
+
+        tv_customer_mail.setText(email);
+        tv_customer_name.setText(name);
+
     }
 }

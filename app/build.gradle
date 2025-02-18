@@ -47,5 +47,4 @@ dependencies {
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     // crypt
     implementation 'at.favre.lib:bcrypt:0.10.2'
-    implementation 'androidx.biometric:biometric:1.2.0'
 }

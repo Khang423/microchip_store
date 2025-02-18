@@ -78,13 +78,6 @@ public class DashboardActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        btn_statistics.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(DashboardActivity.this, StatisticAcitivity.class);
-                startActivity(intent);
-            }
-        });
         btn_logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

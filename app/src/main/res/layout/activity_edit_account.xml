@@ -25,7 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:backgroundTint="@color/Purple"
+        android:backgroundTint="@color/RoyalBlue"
         android:text="Chọn Ảnh"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -113,33 +113,6 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayoutPassword"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_marginStart="25dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="25dp"
-        android:hint="Mật khẩu"
-        app:counterEnabled="true"
-        app:counterMaxLength="32"
-        app:endIconMode="password_toggle"
-        app:helperTextTextColor="@color/Red"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayoutMail"
-        app:startIconDrawable="@drawable/ic_password">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/input_password"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:inputType="textPassword"
-            android:maxLength="33"/>
-
-    </com.google.android.material.textfield.TextInputLayout>
-    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayoutGender"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
@@ -152,7 +125,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayoutPassword"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayoutMail"
         app:startIconDrawable="@drawable/ic_gender">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -216,7 +189,7 @@
         android:layout_width="360dp"
         android:layout_height="60dp"
         android:layout_marginBottom="12dp"
-        android:backgroundTint="@color/Purple"
+        android:backgroundTint="@color/RoyalBlue"
         android:text="Cập nhật"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

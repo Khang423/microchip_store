@@ -56,7 +56,7 @@ public class CustomerHelper extends SQLiteOpenHelper {
         }
     }
 
-    public void update(int id, String name, String email, String tel, String url_avatar, int gender, String birthday, String password, String address) {
+    public void update(int id, String name, String email, String tel, String url_avatar, int gender, String birthday, String address) {
         db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         // Gán dữ liệu vào ContentValues
@@ -66,7 +66,6 @@ public class CustomerHelper extends SQLiteOpenHelper {
         values.put("avatar", url_avatar);
         values.put("gender", gender);
         values.put("birthday", birthday);
-        values.put("password", password);
         values.put("address", address);
 
         // Thêm dữ liệu vào bảng customer
@@ -75,9 +74,9 @@ public class CustomerHelper extends SQLiteOpenHelper {
 
 
         if (result == -1) {
-            Toast.makeText(context, "Cập nhật khách hàng thành công!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Cập nhật không thành công!", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(context, "Cập nhật hàng thành công!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Cập nhật thành công!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -86,8 +85,7 @@ public class CustomerHelper extends SQLiteOpenHelper {
         db.delete("customer", "id = ?", new String[]{String.valueOf(customer_id)});
         db.delete("[order]", "customer_id = ?", new String[]{String.valueOf(customer_id)});
         db.close();
-//        AuthHelper authHelper = new AuthHelper(context);
-//        authHelper.logOut();
+        Toast.makeText(context, "Xoá tào khoản thành công", Toast.LENGTH_SHORT).show();
     }
 
     public Customer getCustomerInfo(String email) {
@@ -115,6 +113,14 @@ public class CustomerHelper extends SQLiteOpenHelper {
         return null;
     }
 
-
-
+    public String getMail(int customer_id){
+        db = this.getWritableDatabase();
+        String getMail = "";
+        Cursor cursor =  db.rawQuery("select email from customer where id = ?",new String[]{String.valueOf(customer_id)});
+        if(cursor != null){
+           getMail = cursor.getString(0);
+        }
+        cursor.close();
+        return getMail;
+    }
 }

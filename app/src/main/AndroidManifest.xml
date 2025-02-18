@@ -22,9 +22,6 @@
         android:theme="@style/Theme.Microchip"
         tools:targetApi="31">
         <activity
-            android:name=".activity.auth.TestActivity"
-            android:exported="false" />
-        <activity
             android:name=".activity.DashboardActivity"
             android:exported="false" />
         <activity
@@ -50,6 +47,9 @@
             android:exported="false" />
         <activity
             android:name=".activity.orderDetail.ListViewProductActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.orderDetail.ViewOrderDetailPendingApprovalActivity"
             android:exported="false" />
         <activity
             android:name=".activity.orderDetail.ViewOrderDetailActivity"

@@ -4,29 +4,31 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.microchip.R;
 import com.example.microchip.adapter.ProductTypeAdapter;
 import com.example.microchip.model.ProductType;
+import com.google.android.material.appbar.MaterialToolbar;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ProductTypeActivity extends AppCompatActivity {
 
-    ImageView btnAdd;
 
     SQLiteDatabase db;
 
     RecyclerView rcvProductType;
     ProductTypeAdapter productTypeAdapter;
-
+    MaterialToolbar materialToolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,18 +41,21 @@ public class ProductTypeActivity extends AppCompatActivity {
 
         productTypeAdapter.setData(getListProduct());
         rcvProductType.setAdapter(productTypeAdapter);
-        btnAdd.setOnClickListener(new View.OnClickListener() {
+        materialToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(ProductTypeActivity.this, AddProductTypeActivity.class);
-                startActivityForResult(intent, 100);
+            public boolean onMenuItemClick(MenuItem item) {
+                if(item.getItemId() == R.id.add_product){
+                    Intent intent = new Intent(ProductTypeActivity.this, AddProductTypeActivity.class);
+                    startActivityForResult(intent, 100);
+                }
+                return false;
             }
         });
     }
 
     public void init() {
-        btnAdd = findViewById(R.id.btn_add);
         rcvProductType = findViewById(R.id.rcv_product_type);
+        materialToolbar = findViewById(R.id.toolbar);
     }
 
     private List<ProductType> getListProduct(){
