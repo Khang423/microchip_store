@@ -9,6 +9,9 @@
     <uses-feature
         android:name="android.hardware.fingerprint"
         android:required="true" />
+    <uses-feature
+        android:name="android.hardware.fingerprint"
+        android:required="true" />
 
     <application
         android:name=".GlobalSession"
@@ -21,6 +24,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Microchip"
         tools:targetApi="31">
+        <activity
+            android:name=".activity.auth.TestActivity"
+            android:exported="false" />
         <activity
             android:name=".activity.DashboardActivity"
             android:exported="false" />

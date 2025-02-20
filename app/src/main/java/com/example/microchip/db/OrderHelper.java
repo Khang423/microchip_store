@@ -9,10 +9,12 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.microchip.activity.StatisticAcitivity;
+import com.example.microchip.model.OrderData;
 import com.github.mikephil.charting.data.BarEntry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class OrderHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "microchip.db";
@@ -164,4 +166,40 @@ public class OrderHelper extends SQLiteOpenHelper {
         db.close();
         Toast.makeText(context, "Cập nhật đơn hàng thành công", Toast.LENGTH_SHORT).show();
     }
+
+    public List<OrderData> getOrderData(String keyword, String fromday, String today) {
+        List<OrderData> orderDataList = new ArrayList<>();
+        db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery(
+                "SELECT " +
+                        "p.name, " +
+                        "SUM(od.quantity) AS total_quantity, " +
+                        "od.price, " +
+                        "SUM(od.price * od.quantity) AS total_price " +
+                        "FROM order_detail AS od " +
+                        "JOIN product AS p ON p.id = od.product_id " +
+                        "JOIN \"order\" AS o ON o.id = od.order_id " +  // Sử dụng nháy kép nếu bắt buộc dùng "order"
+                        "WHERE p.name LIKE '%' || ? || '%' AND o.created_at BETWEEN ? AND ? " +
+                        "GROUP BY p.name " +
+                        "ORDER BY total_price DESC",
+                new String[]{keyword, fromday, today}
+        );
+
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                String name = cursor.getString(0);
+                int quantity = cursor.getInt(1);
+                double price = cursor.getDouble(2);
+                double total = cursor.getDouble(3);
+
+                orderDataList.add(new OrderData(name, quantity, price, total));
+            }
+            cursor.close();
+        }
+
+        db.close();
+        return orderDataList;
+    }
+
 }
